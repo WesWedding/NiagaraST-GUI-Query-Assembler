@@ -1,1 +1,20 @@
 Future home of the sourcecode for a NiagraST user-interface implementation for NiagraST queries!
+
+To participate in this: (swap in your username)
+
+git clone git@github.com:username/NiagraST-GUI-Query-Assembler.git
+
+Start coding!
+
+Make sure to commit regularly.  To do so...
+
+git status  - this will tell you what files aren't being tracked, or which are being tracked but have changed
+
+git add <filename, or wildcard pattern> - this will tell the git repo to add these files to the next commit
+
+git commit -m "Messages go here"  -  This will commit your changes and create a piece of history in the repository.  Make sure your message describes what you're committing, and make sure your commits aren't too big!  COMMIT AND COMMIT OFTEN!
+
+When you've done some work and want to share it with the rest of us, use...
+
+git push origin
+
