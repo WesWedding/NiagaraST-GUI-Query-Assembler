@@ -18,3 +18,9 @@ When you've done some work and want to share it with the rest of us, use...
 
 git push origin
 
+Required Java packages:
+	This program has the following dependancies...
+	
+	The Java Simple API for XML (SAX), which comes standard with Java these days.
+	The DTDParser package by Ronald Bourret at http://www.rpbourret.com/dtdparser/index.htm
+
