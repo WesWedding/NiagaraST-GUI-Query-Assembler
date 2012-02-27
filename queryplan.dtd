@@ -1,0 +1,469 @@
+<!-- $Id: queryplan.dtd,v 1.42 2005/10/10 20:32:23 vpapad Exp $
+     DTD for query plans -->
+
+<!-- 
+     Plan is a dummy node, representing the output of a query plan.
+     top is a ref to the topmost operator, usually a construct.
+-->
+<!ENTITY % PositionAttributes "x CDATA #IMPLIED
+          y CDATA #IMPLIED">
+
+<!ELEMENT plan     (unnest | sort | expression | avg |
+		    slidingAvg | sum | slidingSum | max |
+		    slidingMax | count | slidingCount | incrmax |
+		    incravg | select | dup | union | join |
+		    dtdscan | resource | constant | timer |
+		    prefix | punctuate | send | display | topn |
+		    firehosescan | filescan | construct | 
+		    bucket | partitionavg | partitionmax |
+		    accumulate | nest | magic_construct | 
+		    windowCount | windowMax | windowAverage  | windowJoin |
+		    store | load | xmlscan)+>
+		    
+<!ATTLIST plan top IDREF        #REQUIRED
+          %PositionAttributes;>
+
+<!-- 
+     For all operators, an "id" attribute is required, so that other 
+     operators may reference them. 
+-->
+<!ENTITY % StandardAttributes "id ID   #REQUIRED
+	 input     IDREF               #REQUIRED
+         location  CDATA               #IMPLIED                        
+	 %PositionAttributes;">
+
+<!-- 
+     type : Whether we want the element itself, its content, or its tag name
+     root:  Where is the regular expression rooted. Default: unnest's input
+     regexp: The XML-QL regular expression
+     outer: What to do if there are no matches for the regexp
+            no - do not output anything (default)
+            yes - output a null-padded tuple
+            strict - consider it a fatal error
+-->
+
+<!ELEMENT unnest     EMPTY>
+<!ATTLIST unnest 
+
+	  type	   (tag|element|content) "element"
+	  root	   CDATA                 ""
+	  regexp   CDATA               #REQUIRED
+	  outer    (yes|no|strict)     "no"
+	  %StandardAttributes;>
+
+<!ELEMENT sort     EMPTY>
+<!ATTLIST sort 
+
+	  order	   (descending|ascending) "descending"
+	  comparison (alphabetic|numeric) "alphabetic"
+	  sort_by  CDATA               #REQUIRED
+	  %StandardAttributes;>
+
+<!-- One of the class and expression attributes must be specified.
+     The "variables" attribute is a list of variables the expression
+     uses; for the default ("*"), the expression needs every variable
+     in the input schema -->
+<!-- KT - believe you need either an expression or a class -->
+<!ELEMENT expression     EMPTY>
+<!ATTLIST expression 
+
+	  class   CDATA           ""
+	  expression CDATA	  ""
+	  variables CDATA         "*"
+	  %StandardAttributes;>
+
+
+<!ELEMENT avg     EMPTY>
+<!ATTLIST avg 
+	  groupby  CDATA	       #REQUIRED
+	  avgattr  CDATA	       #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT windowAverage    EMPTY>
+<!ATTLIST windowAverage
+	  groupby  CDATA		#REQUIRED
+	  avgattr  CDATA		#REQUIRED
+	  wid	   CDATA		""
+	  %StandardAttributes;>
+
+<!ELEMENT slidingAvg     EMPTY>
+<!ATTLIST slidingAvg 
+	  groupby  CDATA	       #REQUIRED
+	  avgattr  CDATA	       #REQUIRED
+	  range    CDATA               #REQUIRED
+	  every    CDATA               #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT sum     EMPTY>
+<!ATTLIST sum 
+	  groupby  CDATA	       #REQUIRED
+	  sumattr  CDATA	       #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT slidingSum     EMPTY>
+<!ATTLIST slidingSum 
+	  groupby  CDATA	       #REQUIRED
+	  sumattr  CDATA	       #REQUIRED
+	  every    CDATA	       #REQUIRED
+	  range    CDATA               #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT max     EMPTY>
+<!ATTLIST max 
+	  groupby  CDATA	       #REQUIRED
+	  maxattr  CDATA	       #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT windowMax	EMPTY>
+<!ATTLIST windowMax
+	  groupby  CDATA		#REQUIRED
+	  maxattr  CDATA		#REQUIRED
+	  wid	   CDATA		""
+	  %StandardAttributes;>
+	  
+<!ELEMENT slidingMax     EMPTY>
+<!ATTLIST slidingMax 
+	  groupby  CDATA	       #REQUIRED
+	  maxattr  CDATA	       #REQUIRED
+	  every    CDATA	       #REQUIRED
+	  range    CDATA               #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT count     EMPTY>
+<!ATTLIST count 
+	  groupby  CDATA	       #REQUIRED
+	  countattr  CDATA	       #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT windowCount	EMPTY>
+<!ATTLIST windowCount
+	  groupby    CDATA		#REQUIRED
+	  countattr  CDATA		#REQUIRED
+	  wid	     CDATA		""
+	  %StandardAttributes;>
+
+<!ELEMENT slidingCount     EMPTY>
+<!ATTLIST slidingCount 
+	  groupby  CDATA	       #REQUIRED
+	  countattr  CDATA	       #REQUIRED
+	  every    CDATA	       #REQUIRED
+	  range    CDATA               #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT incrmax     EMPTY>
+<!ATTLIST incrmax 
+	  groupby  CDATA	       #REQUIRED
+	  maxattr  CDATA	       #REQUIRED
+	  emptygroupvalue  CDATA       #REQUIRED
+	  %StandardAttributes;>
+	  
+<!ELEMENT partitionmax EMPTY>
+<!ATTLIST partitionmax
+	  groupby  CDATA	       #REQUIRED
+	  maxattr  CDATA	       #REQUIRED
+	  landmark CDATA	       #REQUIRED
+	  range    CDATA	       ""
+	  emptygroupvalue  CDATA       #REQUIRED
+	  %StandardAttributes;>
+	  
+<!ELEMENT incravg     EMPTY>
+<!ATTLIST incravg 
+	  groupby  CDATA	       #REQUIRED
+	  avgattr  CDATA	       #REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT partitionavg EMPTY>
+<!ATTLIST partitionavg
+	  groupby CDATA		       #REQUIRED
+	  avgattr CDATA		       #REQUIRED
+	  landmark CDATA	       #REQUIRED	
+	  range	  CDATA		       "" 	
+	  %StandardAttributes;>
+
+<!ELEMENT select  (and | or | not | pred)>
+<!ATTLIST select 
+	  %StandardAttributes;>
+
+<!ELEMENT dup  EMPTY>
+<!ATTLIST dup
+          branch   CDATA    #REQUIRED 
+	  %StandardAttributes;>
+
+<!ELEMENT union  (mapping*)>
+<!ATTLIST union
+         id ID                         #REQUIRED
+         input    IDREFS               #REQUIRED
+	 %StandardAttributes;>
+
+<!-- outputattr is the name of the output attr to be
+     created from the associated inputattrs. inputattrs
+     is a space or comma separated list of input attr
+     names. There must be one input attr name for each
+     input and the names must appear in the same order
+     as their associated inputs -->
+<!ELEMENT mapping EMPTY>
+<!ATTLIST mapping
+	outputattr    CDATA 	#REQUIRED
+	inputattrs    CDATA 	#REQUIRED>
+
+
+<!--
+        "left" and "right" are lists of variables used in an equijoin.
+	It's necessary to specify them when using a hash join 
+	implementation.
+-->
+<!ELEMENT join (and | or | not | pred)?>
+<!ATTLIST join
+          id       ID                   #REQUIRED
+	  left	   CDATA		#IMPLIED
+	  right	   CDATA		#IMPLIED
+          input    IDREFS               #REQUIRED
+          extensionjoin (left | right | both | none)  "none"
+	  %PositionAttributes;>
+
+<!ELEMENT windowJoin EMPTY>
+<!ATTLIST windowJoin
+          id	ID		#REQUIRED
+	  left	CDATA		#REQUIRED
+	  right CDATA		#REQUIRED
+	  input	IDREFS		#REQUIRED
+	  %PositionAttributes;>
+	  
+
+<!ELEMENT and     (and | or | not | pred)+>
+<!ELEMENT or      (and | or | not | pred)+>
+<!ELEMENT not     (and | or | not | pred)>
+
+<!ELEMENT pred    (number | string | var | path)+>
+<!ATTLIST pred
+          op      (lt | gt | le | ge | ne | eq)  #REQUIRED>
+<!ELEMENT number  EMPTY>
+<!ATTLIST number
+          value   CDATA                #REQUIRED>
+
+<!ELEMENT string  EMPTY>
+<!ATTLIST string 
+          value   CDATA                #REQUIRED>
+
+<!ELEMENT var  EMPTY>
+<!ATTLIST var
+          value   CDATA                #REQUIRED>
+
+<!ELEMENT path  EMPTY>
+<!ATTLIST path
+          var   CDATA                #REQUIRED
+          path  CDATA                #REQUIRED>
+
+<!ELEMENT dtdscan  (url)+>
+<!ATTLIST dtdscan 
+          id       ID           #REQUIRED
+	  %PositionAttributes;>
+
+<!ELEMENT resource EMPTY>
+<!ATTLIST resource 
+          id       ID           #REQUIRED
+          urn      CDATA        #REQUIRED
+	  %PositionAttributes;>
+
+<!-- Constant is a pseudo-operator for including a document verbatim 
+     as a source in a query plan. The document should be included 
+     as a CDATA section, to avoid costly parse phases. Important
+     caveat: CDATA sections cannot nest! -->
+  
+<!ELEMENT constant  (#PCDATA)>
+<!ATTLIST constant 
+          id       ID           #REQUIRED
+	  %PositionAttributes;>
+
+<!-- Timer produces a stream of timestamp tuples. The syntax for
+     time intervals (period, slack, and granularity) is
+     one or more (<number>, <time term>) pairs, for example:
+     "3 hours" and "1 hour 10 minutes" are valid time intervals
+     
+	 period:      time between clock ticks
+	 relative:    the date we measure time relative to
+	              empty string  ->  regular Java/POSIX epoch
+	              "now"         ->  time the query plan starts executing
+	              anything else ->  a date string
+	 slack:       time to wait before reporting a clock tick
+	 warp:        simulated time runs "warp" times faster than normal
+	 granularity: reported time is rounded down to a multiple of "granularity"
+-->
+<!ELEMENT timer EMPTY>
+<!ATTLIST timer 
+          id       ID           #REQUIRED
+          period   CDATA		#REQUIRED
+          relative CDATA		"now"
+          slack	   CDATA	    ""  
+          delay    CDATA		""
+          warp     CDATA		"1" 
+          granularity CDATA     "1 second"
+	  %PositionAttributes;>
+
+<!-- Timer passes through up to "length" tuples from its input stream -->
+<!ELEMENT prefix EMPTY>
+<!ATTLIST prefix
+          id       ID           #REQUIRED
+          length   CDATA		#REQUIRED
+	  %StandardAttributes;>
+
+<!ELEMENT punctuate EMPTY>
+<!ATTLIST punctuate
+          id       ID           #REQUIRED
+	  datainput CDATA       #REQUIRED
+	  dataattr CDATA        #REQUIRED
+	  timer    CDATA        #REQUIRED
+	  input    IDREFS       #REQUIRED
+	  %PositionAttributes;>
+
+<!-- winattr is required for time-based windows, but not for tuple-based windows;
+     wid is needed  when the window aggregate is not the next to bucket-->
+
+<!ELEMENT bucket EMPTY>
+<!ATTLIST bucket 
+	  id	   ID		#REQUIRED
+	  range	   CDATA	#REQUIRED
+	  slide	   CDATA	#REQUIRED
+	  wintype  CDATA	#REQUIRED
+	  winattr  CDATA	""
+	  wid	   CDATA	""
+	  order    (yes|no)     "yes"
+	  %StandardAttributes;>
+
+<!ELEMENT describe EMPTY>
+<!ATTLIST describe
+		id       ID           #REQUIRED
+		attrsDescribe	CDATA	#REQUIRED
+		input    IDREFS       #REQUIRED
+	  %PositionAttributes;>
+
+<!ELEMENT send EMPTY>
+<!ATTLIST send 
+          id       ID           #REQUIRED
+          query_id CDATA        #REQUIRED
+	  %PositionAttributes;>
+
+<!-- Send results of the query back to the client -->
+<!ELEMENT display EMPTY>
+<!ATTLIST display 
+          id       ID           #REQUIRED
+          query_id CDATA        #REQUIRED
+          client_location CDATA #REQUIRED
+	  %PositionAttributes;>
+
+<!-- Top n tuples --> 
+<!ELEMENT topn EMPTY>
+<!ATTLIST topn
+	  order	   (descending|ascending) "descending"
+	  comparison (alphabetic|numeric) "alphabetic"
+	  sort_by  CDATA        #REQUIRED
+          number   CDATA        #REQUIRED        
+	  %StandardAttributes;>
+
+<!ELEMENT firehosescan  EMPTY>
+<!ATTLIST firehosescan 
+          id             ID           #REQUIRED
+	  host	         CDATA   #REQUIRED
+	  port	         CDATA   #REQUIRED
+	  rate	         CDATA   #REQUIRED 
+	  datatype  (xmlb | subfile | temp | auction | dtd |auction_stream | file | packet) "auction"
+	  num_gen_calls  CDATA   #REQUIRED  
+	  desc           CDATA   ""
+	  desc2          CDATA   "bidperson"
+	  num_tl_elts    CDATA   "1"   
+	  prettyprint   (yes | no)  "no"
+	  trace          CDATA   ""
+	  %PositionAttributes;>
+
+<!-- NOTE: num_gen_calls is the number of times the generator will be called 
+           to generate data. if num_gen_calls is 0, the generator will be
+           called over and over until the stream is shutdown.
+           
+           num_tl_elts is the number of top level elements in a document
+           generated in one call to the generator. This value controls, 
+           for example, how many PLAY elements there are in a GAMEDATA
+           document in the XMLB data. This attribute is applicable to
+           XMLB and AUCTION generators only.
+
+           comments on attributes:
+           id, host, port, rate, datatype, num_gen_calls - required for all types
+
+	   rate is in KB/sec
+                                                                      (or use defaults)
+
+           desc and num_tl_elts are applicable as follows:
+
+           xmlb:    num_tl_elts   (no desc)
+           subfile: desc          (no num_tl_elts)
+           temp:    desc              "
+           auction: desc, num_tl_elts, desc2 
+	 	desc is startFileName, desc2 specifies type of data
+           dtd:     desc          (no num_tl_elts)
+	   auction_stream: desc is not necessary, num_tl_elts not
+	      currently used
+	   file:    desc is filename, num_tl_elts not used
+
+-->
+
+
+<!ELEMENT filescan  EMPTY>
+<!ATTLIST filescan 
+          id       ID           #REQUIRED
+          filename CDATA        #REQUIRED
+	  isstream (yes | no) "yes"
+	  %PositionAttributes;>
+<!-- isStream should be yes if file is a stream in niagara:stream
+     format, no otherwise. If isStream is no, then file must
+     contain only one document -->
+
+<!ELEMENT xmlscan EMPTY>
+<!ATTLIST xmlscan 
+          id       ID           #REQUIRED
+          filename CDATA        #REQUIRED
+          attrs    CDATA		#REQUIRED
+	  isstream (yes | no) "yes"
+	  %PositionAttributes;>
+<!-- isStream should be yes if file is a stream in niagara:stream
+     format, no otherwise. If isStream is no, then file must
+     contain only one document -->
+
+
+<!ELEMENT url        EMPTY >
+<!ATTLIST url
+          value    CDATA        #REQUIRED>
+
+<!ELEMENT construct  ANY>
+<!ATTLIST construct  
+          %StandardAttributes;>
+
+<!ELEMENT magic_construct  ANY>
+<!ATTLIST magic_construct  
+          %StandardAttributes;>
+
+<!ELEMENT accumulate EMPTY>
+<!ATTLIST accumulate
+	  mergeAttr   CDATA	#REQUIRED
+	  mergeTemplate CDATA	#REQUIRED
+	  accumFileName CDATA	#REQUIRED
+	  initialAccumFile CDATA #IMPLIED
+	  clear     (true | false) "false"
+	  %StandardAttributes;>
+
+<!ELEMENT nest ANY>
+<!ATTLIST nest 
+	  neston    CDATA	       #REQUIRED
+          %StandardAttributes;>
+
+<!ELEMENT store EMPTY>
+<!ATTLIST store 
+	  root CDATA  #REQUIRED
+	  resource CDATA  #REQUIRED
+          %StandardAttributes;>
+
+<!ELEMENT load EMPTY>
+<!ATTLIST load 
+       id       ID           #REQUIRED
+	  variable CDATA  #REQUIRED
+	  resource CDATA  #REQUIRED
+          %PositionAttributes;>
+          
