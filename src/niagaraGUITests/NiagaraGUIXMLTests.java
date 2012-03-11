@@ -32,7 +32,7 @@ public class NiagaraGUIXMLTests {
         operatorStrings.add("firehosescan"); operatorStrings.add("filescan"); operatorStrings.add("construct");
         operatorStrings.add("bucket"); operatorStrings.add("partitionavg"); operatorStrings.add("partitionmax");
         operatorStrings.add("accumulate"); operatorStrings.add("nest"); operatorStrings.add("magic_construct");
-        operatorStrings.add("windowCount"); operatorStrings.add("windowMax"); operatorStrings.add("windowAverage "); operatorStrings.add("windowJoin");
+        operatorStrings.add("windowCount"); operatorStrings.add("windowMax"); operatorStrings.add("windowAverage"); operatorStrings.add("windowJoin");
         operatorStrings.add("store"); operatorStrings.add("load"); operatorStrings.add("xmlscan");
     }
     
