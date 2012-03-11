@@ -43,7 +43,7 @@ public class DTDInterpreter extends DefaultHandler {
 	private void parse() {
 	    ElementType plan;
 	    Hashtable<XMLName, ElementType> elements;
-	    ArrayList<XMLName> elementNames;
+	    ArrayList<XMLName> elementNames, attribNames, subElemNames;
 	    try {
             //xr = XMLReaderFactory.createXMLReader();
             dp = new DTDParser();
@@ -57,9 +57,29 @@ public class DTDInterpreter extends DefaultHandler {
         plan = (ElementType)((Hashtable<XMLName, ElementType>)dtd.elementTypes).get(planName);
         elements = (Hashtable<XMLName, ElementType>)plan.children;
         
+        //Now we have the elements, let's make our template lookup!
+        
         //The following trickery is done because Enumerations don't implement iterators.
-        //This pattern was suggested at: http://www.wikijava.org/wiki/Iterate_through_an_Enumeration
+        //This pattern was suggested at: http://www.wikijava.org/wiki/Iterate_through_an_Enumeration      
         elementNames = new ArrayList<XMLName>(Collections.list((Enumeration<XMLName>)elements.keys()));
-
+        
+        for(XMLName n : elementNames) {
+            ElementType element = elements.get(n);
+            OperatorTemplate template = new OperatorTemplate(n.getLocalName());
+            attribNames = new ArrayList<XMLName>(Collections.list((Enumeration<XMLName>)element.attributes.keys()));
+            subElemNames = new ArrayList<XMLName>(Collections.list((Enumeration<XMLName>)element.children.keys()));
+            
+            //Get the attributes set up
+            for(XMLName a : attribNames) {
+                template.addAttribute((Attribute) element.attributes.get(a));
+            }
+            
+            //Get the subelements set up
+            for(XMLName e : subElemNames) {
+                template.addSubElement((ElementType) element.children.get(e));
+            }
+            //Add our new template to the templateLookup
+            templateLookup.put(template.getName(), template);
+        }
 	}
 }
