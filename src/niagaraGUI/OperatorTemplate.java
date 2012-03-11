@@ -1,19 +1,45 @@
 package niagaraGUI;
 
 import java.util.*;
+import org.xmlmiddleware.schemas.dtds.*;
 
 public class OperatorTemplate {
     private String name;
-    private HashMap<String, attributeType> attributes;
-    private HashMap<String, attributeType> subElements;
+    private HashMap<String, Attribute> attributes;
+    private HashMap<String, ElementType> subElements;
     
-    static public enum attributeType {REQUIRED, OPTIONAL}
+   // static public enum DefaultValue {VAL, REQUIRED, IMPLIED}
     
-    public HashMap<String, attributeType> getAttributes() {
+    /** Contructors **/
+    public OperatorTemplate() {
+        init();
+    }
+    
+    public OperatorTemplate(String inName) {
+        name = inName;
+        init();
+    }
+    
+    private void init() {
+        attributes = new HashMap<String, Attribute>();
+        subElements = new HashMap<String, ElementType>();        
+    }
+    /** End Constructors **/
+    
+    public void addAttribute(Attribute attrib) {
+        String name = attrib.name.getLocalName();
+        attributes.put(name, attrib);
+    }
+    
+    public HashMap<String, Attribute> getAttributes() {
         return attributes;
     }
     
-    public HashMap<String, attributeType> getSubElements() {
+    public void addSubElement(ElementType elem) {
+        subElements.put(elem.name.getLocalName(), elem);
+    }
+    
+    public HashMap<String, ElementType> getSubElements() {
         return subElements;
     }
     

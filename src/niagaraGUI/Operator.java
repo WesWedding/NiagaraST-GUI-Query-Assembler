@@ -1,7 +1,8 @@
 package niagaraGUI;
 
 import java.util.*;
-import niagaraGUI.OperatorTemplate.attributeType;
+//import niagaraGUI.OperatorTemplate.DefaultValue;
+import org.xmlmiddleware.schemas.dtds.*;
 
 /**
  * 
@@ -16,19 +17,19 @@ public class Operator {
     
     public Operator(OperatorTemplate opTemplate) {
         
-        HashMap<String, attributeType> templateAttributes = opTemplate.getAttributes();
+        HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         
         
         //Sort out the required and optional attributes
-        Iterator<Map.Entry<String, attributeType>> it = templateAttributes.entrySet().iterator();
+        Iterator<Map.Entry<String, Attribute>> it = templateAttributes.entrySet().iterator();
 
         while (it.hasNext()) {
-          Map.Entry<String, attributeType> entry = it.next();
+          Map.Entry<String, Attribute> entry = it.next();
 
           //Sort out the attributes into required and optionals
-          if (entry.getValue() == attributeType.REQUIRED) {
+          if (entry.getValue().required == Attribute.REQUIRED_OPTIONAL) {
               reqAttribs.put(entry.getKey(), null);
-          } else if(entry.getValue() == attributeType.OPTIONAL) {
+          } else if(entry.getValue().required == Attribute.REQUIRED_OPTIONAL) {
               optAttribs.put(entry.getKey(), null);
           }
         }
