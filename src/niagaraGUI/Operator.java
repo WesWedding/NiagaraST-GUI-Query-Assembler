@@ -27,7 +27,7 @@ public class Operator {
           Map.Entry<String, Attribute> entry = it.next();
 
           //Sort out the attributes into required and optionals
-          if (entry.getValue().required == Attribute.REQUIRED_OPTIONAL) {
+          if (entry.getValue().required == Attribute.REQUIRED_REQUIRED) {
               reqAttribs.put(entry.getKey(), null);
           } else if(entry.getValue().required == Attribute.REQUIRED_OPTIONAL) {
               optAttribs.put(entry.getKey(), null);
