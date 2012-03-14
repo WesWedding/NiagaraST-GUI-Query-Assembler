@@ -11,9 +11,9 @@ import org.xmlmiddleware.schemas.dtds.*;
  */
 
 public class Operator {
-    private HashMap<String, String> reqAttribs; //String name, String value
-    private HashMap<String,String> optAttribs;  //String name, String value
-    private Vector<String> elements;
+    protected HashMap<String, String> reqAttribs; //String name, String value
+    protected HashMap<String,String> optAttribs;  //String name, String value
+    protected Vector<String> elements;
     
     public Operator(OperatorTemplate opTemplate) {
         
