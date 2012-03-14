@@ -18,7 +18,8 @@ public class Operator {
     public Operator(OperatorTemplate opTemplate) {
         
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
-        
+        reqAttribs = new HashMap<String,String>();
+        optAttribs = new HashMap<String,String>();
         
         //Sort out the required and optional attributes
         Iterator<Map.Entry<String, Attribute>> it = templateAttributes.entrySet().iterator();
