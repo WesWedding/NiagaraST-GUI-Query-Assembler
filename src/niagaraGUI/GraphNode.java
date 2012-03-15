@@ -1,4 +1,5 @@
 package niagaraGUI;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 
-public class GraphNode extends Operator {
+public class GraphNode extends Operator implements Serializable {
 	private mxCell portIn;
 	private mxCell portOut;
 	private mxCell mainBox;
@@ -18,14 +19,11 @@ public class GraphNode extends Operator {
 	public GraphNode(OperatorTemplate opTemplate){
 		super(opTemplate);
 	}
-	
-	public String getName(){
-		return "OPERATOR NAME";
-	}
+
 	
 	public String toString(){
 		String s = new String();
-		s += "OPERATOR NAME" + '\n';
+		s += this.name + '\n';
 		s += "Required Attributes: " + '\n';
 		Set<String> reqAttKeys = reqAttribs.keySet();
 		Iterator rkeysit = reqAttKeys.iterator();

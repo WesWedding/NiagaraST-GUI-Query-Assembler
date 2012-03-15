@@ -5,7 +5,8 @@ import java.util.*;
 public class QueryPlan {
     private String filename;
     static private Hashtable<String, OperatorTemplate> opTemplates;
-    private List<Operator> opList;
+    private List<Operator> opList;//
+    private Operator top;//reference to the top operator
     private String queryName;
             
     public QueryPlan(String name, String filename) {

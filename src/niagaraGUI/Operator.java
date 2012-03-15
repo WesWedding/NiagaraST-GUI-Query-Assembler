@@ -13,14 +13,16 @@ import org.xmlmiddleware.schemas.dtds.*;
 public class Operator {
     protected HashMap<String, String> reqAttribs; //String name, String value
     protected HashMap<String,String> optAttribs;  //String name, String value
-    protected Vector<String> elements;
+    protected String elements; //houses xml code for any internal elements like predicates for Select
+    protected String name;//This is name of operator NOT id
+    protected String comments;//Comments to be inserted with this operators XML code
     
     public Operator(OperatorTemplate opTemplate) {
         
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         reqAttribs = new HashMap<String,String>();
         optAttribs = new HashMap<String,String>();
-        
+        name = opTemplate.getName();
         //Sort out the required and optional attributes
         Iterator<Map.Entry<String, Attribute>> it = templateAttributes.entrySet().iterator();
 
@@ -34,6 +36,9 @@ public class Operator {
               optAttribs.put(entry.getKey(), null);
           }
         }
+    }
+    public String getName(){
+    	return this.name;
     }
     
     public Boolean setAttribute(String name, String value) {

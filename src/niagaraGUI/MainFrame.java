@@ -59,9 +59,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		int i=0;
 		while(opIt.hasNext()){
 			String s =(String) opIt.next();
-			System.out.println(s);
 			OperatorTemplate o = operators.get(s);
-			System.out.println(o);
 			nodes[i++] = new GraphNode(o);
 		}
 		
@@ -70,16 +68,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		{
 			
 			for(int j=0; j < nodes.length; j++){
-				System.out.println(nodes[j]);
+				System.out.println(nodes[j].getName());
 				nodes[j].draw(graph, parent);
 			}
-			
-			
-			//
-			
-			
-
-
 			
 		}
 		finally
@@ -113,8 +104,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		graph.setCellStyle( "edgeStyle=mxEdgeStyle.orthoConnector" );
 		graphComponent = new mxGraphComponent(graph);
+		graphComponent.setDragEnabled(false);
 		getContentPane().add(graphComponent);
-		
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 	        @Override
 	        public void mousePressed(MouseEvent e) {
