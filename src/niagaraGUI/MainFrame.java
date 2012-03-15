@@ -35,8 +35,9 @@ public class MainFrame extends JFrame implements ActionListener {
 	private Object parent;
 	private JPopupMenu popup;
 	private JMenuItem propMenuItm;
-	private DTDInterpreter dtd;
-	private Hashtable<String, OperatorTemplate> operators;
+	private QueryPlan queryPlan;
+	private Hashtable<String,OperatorTemplate> operatorTemplates;
+	private String[] operatorNames;
 	private GraphNode[] nodes;
 	
 	
@@ -51,16 +52,14 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 	
 	private void hw(){
-		dtd = new DTDInterpreter("/Users/xianthrops/School/CS410/working/NiagraST-GUI-Query-Assembler/queryplan.dtd");
-		operators = dtd.getTemplates();
-		Set<String> opNames= operators.keySet();
-		Iterator opIt = opNames.iterator();
-		nodes = new GraphNode[opNames.size()];
+		queryPlan = new QueryPlan("QP","queryplan.dtd");
+		operatorTemplates = queryPlan.getOpTemplates();
+		operatorNames = queryPlan.getOperatorNames();
+
+		nodes = new GraphNode[operatorNames.length];
 		int i=0;
-		while(opIt.hasNext()){
-			String s =(String) opIt.next();
-			OperatorTemplate o = operators.get(s);
-			nodes[i++] = new GraphNode(o);
+		for(String op : operatorNames){
+			nodes[i++] = new GraphNode(operatorTemplates.get(op));
 		}
 		
 		

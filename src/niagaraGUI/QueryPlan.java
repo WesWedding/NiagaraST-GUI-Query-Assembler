@@ -8,9 +8,13 @@ public class QueryPlan {
     private List<Operator> opList;//
     private Operator top;//reference to the top operator
     private String queryName;
+    private DTDInterpreter dtdInterp;
             
     public QueryPlan(String name, String filename) {
         opTemplates = new Hashtable<String, OperatorTemplate>();
+        dtdInterp = new DTDInterpreter(filename);
+        opTemplates = dtdInterp.getTemplates();
+        
     }
     
     static public Hashtable<String, OperatorTemplate> getOpTemplates() {
@@ -26,7 +30,11 @@ public class QueryPlan {
     }
     public String[] getOperatorNames(){
     	if (opTemplates != null){
-    		return (String[])opTemplates.keySet().toArray();
+    		Set<String> opNameSet = opTemplates.keySet();
+    		String[] opNameAry = new String[opNameSet.size()];
+    		opNameAry = opNameSet.toArray(opNameAry);
+    		
+    		return opNameAry;
     	}
     	else return null;
     }
