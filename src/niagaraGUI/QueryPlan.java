@@ -24,6 +24,12 @@ public class QueryPlan {
     public void generateXML(String filename) {
         
     }
+    public String[] getOperatorNames(){
+    	if (opTemplates != null){
+    		return (String[])opTemplates.keySet().toArray();
+    	}
+    	else return null;
+    }
     
     public void setName(String name) {
         queryName = name;
