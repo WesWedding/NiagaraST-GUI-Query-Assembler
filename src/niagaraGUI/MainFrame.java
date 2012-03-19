@@ -22,6 +22,9 @@ import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
@@ -39,10 +42,61 @@ public class MainFrame extends JFrame implements ActionListener {
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
 	private GraphNode[] nodes;
+	private OperatorSelectorDialog opPicker;
 	
 	
 	private mxGraphComponent graphComponent;
 	private mxCell clickedCell;
+	
+	private class EdgeListener implements mxIEventListener{
+		@Override //Edge creation
+		public void invoke(Object sender, mxEventObject evt) {
+			// TODO Auto-generated method stub
+			mxCell edge = (mxCell) evt.getProperty("cell");
+			
+			GraphNode.IOPort out = (GraphNode.IOPort) edge.getSource();// gives the source cell
+			GraphNode.IOPort in = (GraphNode.IOPort) edge.getTarget();//gives the target cell
+			GraphNode sourceOp;
+			GraphNode sinkOp;
+			if (in.isInput() && out.isOutput()){//good edge
+				System.out.println("GOOD EDGE");
+			}
+			else if (in.isOutput() && out.isInput()){//backwards edge
+				System.out.println("BACKWARDS EDGE");
+				mxCell[] toRemove = {edge};
+				graphComponent.getGraph().removeCells(toRemove);
+				edge.setTerminal(out, false);
+				edge.setTerminal(in, true);
+				graphComponent.getGraph().addCell(edge);
+				GraphNode.IOPort hold = out;
+				out = in;
+				in = hold;
+			}
+			else{//bad edge
+				mxCell[] toRemove = {edge};
+				graphComponent.getGraph().removeCells(toRemove);
+				System.out.println("BAD EDGE");
+				return;
+			}
+			sourceOp = (GraphNode)out.getParent().getValue();
+			sinkOp = (GraphNode)in.getParent().getValue();
+			sinkOp.addInput(sourceOp);
+			System.out.println("New Edge " + sourceOp.getName() + " to " + sinkOp.getName());
+		}
+	}
+	
+	private class MouseListener extends MouseAdapter{
+		@Override
+        public void mousePressed(MouseEvent e) {
+        	if (e.getButton() == e.BUTTON3){
+	            clickedCell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
+	            System.out.println("Mouse click in graph component");
+	            popup.show(graphComponent, e.getX(), e.getY());
+        	}
+        }
+	
+	}
+	
 	public MainFrame(){
 		super();
 		//jd = new JDesktopPane();
@@ -55,6 +109,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		queryPlan = new QueryPlan("QP","queryplan.dtd");
 		operatorTemplates = queryPlan.getOpTemplates();
 		operatorNames = queryPlan.getOperatorNames();
+		opPicker = new OperatorSelectorDialog(operatorNames);
 
 		nodes = new GraphNode[operatorNames.length];
 		int i=0;
@@ -105,17 +160,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		graphComponent = new mxGraphComponent(graph);
 		graphComponent.setDragEnabled(false);
 		getContentPane().add(graphComponent);
-		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-	        @Override
-	        public void mousePressed(MouseEvent e) {
-	        	if (e.getButton() == e.BUTTON3){
-		            clickedCell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
-		            System.out.println("Mouse click in graph component");
-		            popup.show(graphComponent, e.getX(), e.getY());
-	        	}
-	        }
-	    });
-		
+		graphComponent.getGraphControl().addMouseListener(new MouseListener());
+		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener());
 		popup = new JPopupMenu();
 		propMenuItm = new JMenuItem("Properties");
 		propMenuItm.addActionListener(this);
@@ -132,6 +178,9 @@ public class MainFrame extends JFrame implements ActionListener {
 	    frame.setVisible(true);
 	}
 
+	
+	//Listeners
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -143,5 +192,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void showPopup(){
 		
 	}
+
+
+		
 
 }

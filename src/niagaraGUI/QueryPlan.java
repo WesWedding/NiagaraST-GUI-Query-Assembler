@@ -68,4 +68,12 @@ public class QueryPlan {
     public String toString() {
         return null;        
     }
+    
+    public void setTop(Operator newTop){
+    	if (top != null){
+    		top.isTop = false;
+    		top = newTop;
+    		top.isTop = true;
+    	}
+    }
 }

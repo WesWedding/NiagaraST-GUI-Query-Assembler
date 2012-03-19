@@ -13,9 +13,11 @@ import org.xmlmiddleware.schemas.dtds.*;
 public class Operator {
     protected HashMap<String, String> reqAttribs; //String name, String value
     protected HashMap<String,String> optAttribs;  //String name, String value
+    protected Set<String> inputs;
     protected String elements; //houses xml code for any internal elements like predicates for Select
     protected String name;//This is name of operator NOT id
     protected String comments;//Comments to be inserted with this operators XML code
+    protected boolean isTop = false;
     
     public Operator(OperatorTemplate opTemplate) {
         
@@ -60,5 +62,11 @@ public class Operator {
     }
     public HashMap<String,String> getOptionalAttributes() {
         return optAttribs;
+    }
+    public Set<String> getInputArray(){
+    	return inputs;
+    }
+    public void addInput(Operator input){
+    	inputs.add(input.getName());
     }
 }
