@@ -144,7 +144,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		Map<String, Object> stil = new HashMap<String, Object>();
 		stil.put(mxConstants.STYLE_ROUNDED, true);
-		stil.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION); // <-- This is what you want
+		stil.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stil.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		stil.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
 		stil.put(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);

@@ -24,6 +24,7 @@ public class Operator {
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         reqAttribs = new HashMap<String,String>();
         optAttribs = new HashMap<String,String>();
+        inputs = new HashSet<String>();
         name = opTemplate.getName();
         //Sort out the required and optional attributes
         Iterator<Map.Entry<String, Attribute>> it = templateAttributes.entrySet().iterator();
@@ -67,6 +68,14 @@ public class Operator {
     	return inputs;
     }
     public void addInput(Operator input){
-    	inputs.add(input.getName());
+    	//System.out.println(input.getClass());
+    	if (input != null && input instanceof Operator){
+    		String name = input.getName();
+    		if (name != null){
+	    		//System.out.println(name==null);
+	    		//System.out.println(name);
+	    		inputs.add(name);
+    		}
+    	}
     }
 }
