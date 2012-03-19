@@ -9,10 +9,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +45,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private QueryPlan queryPlan;
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
-	private GraphNode[] nodes;
+	private List<GraphNode> nodes;
 	private OperatorSelectorDialog opPicker;
 	
 	
@@ -99,45 +103,13 @@ public class MainFrame extends JFrame implements ActionListener {
 	
 	public MainFrame(){
 		super();
-		//jd = new JDesktopPane();
-		//setContentPane(jd);
 		initComponents();
-		hw();
 	}
 	
-	private void hw(){
-		queryPlan = new QueryPlan("QP","queryplan.dtd");
-		operatorTemplates = queryPlan.getOpTemplates();
-		operatorNames = queryPlan.getOperatorNames();
-		opPicker = new OperatorSelectorDialog(operatorNames);
-
-		nodes = new GraphNode[operatorNames.length];
-		int i=0;
-		for(String op : operatorNames){
-			nodes[i++] = new GraphNode(operatorTemplates.get(op));
-		}
-		
-		
-		try
-		{
-			
-			for(int j=0; j < nodes.length; j++){
-				System.out.println(nodes[j].getName());
-				nodes[j].draw(graph, parent);
-			}
-			
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
-		}
-
-		
-	}
 	private void initComponents(){
 		graph = new mxGraph();
 		parent = graph.getDefaultParent();
-
+		nodes = new ArrayList<GraphNode>();
 		graph.getModel().beginUpdate();
 		graph.setCellsEditable(false);
 		graph.setAutoSizeCells(true);
@@ -167,6 +139,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		propMenuItm.addActionListener(this);
 		popup.add(propMenuItm);
 		
+		queryPlan = new QueryPlan("QP","queryplan.dtd");
+		operatorTemplates = queryPlan.getOpTemplates();
+		operatorNames = queryPlan.getOperatorNames();
+		opPicker = new OperatorSelectorDialog(operatorNames, this);
+		
+		graph.getModel().endUpdate();
 	}
 	/**
 	 * @param args
@@ -189,8 +167,26 @@ public class MainFrame extends JFrame implements ActionListener {
 			System.out.println("cell=" + graph.getLabel(clickedCell));
 		}
 	}
-	public void showPopup(){
-		
+	
+	public boolean addOperator(String opName){
+		graph.getModel().beginUpdate();
+		try
+		{
+			System.out.println(opName);
+			System.out.println(operatorTemplates.get(opName));
+			GraphNode newNode = new GraphNode(operatorTemplates.get(opName));
+			nodes.add(newNode);
+			newNode.draw(graph, parent);
+		}
+		catch (Exception e){
+			System.out.println(e);
+			return false;
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+		return true;
 	}
 
 
