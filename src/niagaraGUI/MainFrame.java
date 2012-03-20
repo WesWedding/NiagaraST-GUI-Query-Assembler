@@ -55,6 +55,11 @@ public class MainFrame extends JFrame implements ActionListener {
 	private mxCell clickedCell;
 	
 	private class EdgeListener implements mxIEventListener{
+		JFrame master;
+		
+		public EdgeListener(JFrame master){
+			this.master = master;
+		}
 		@Override //Edge creation
 		public void invoke(Object sender, mxEventObject evt) {
 			mxCell edge = (mxCell) evt.getProperty("cell");
@@ -84,16 +89,31 @@ public class MainFrame extends JFrame implements ActionListener {
 				if (sourceOp == sinkOp){//self input, no good!
 					throw new Exception("BAD EDGE");
 				}
-				sinkOp.addInput(sourceOp);
+				if (!sinkOp.connect(sourceOp)) {
+					JOptionPane.showMessageDialog(this.master,
+							"You have made a connection from an unidentified node or you have made a duplicate connection.\n",
+							"Invalid Connection",
+							JOptionPane.ERROR_MESSAGE);
+					throw new Exception("Invalid Connection");
+				}
 				System.out.println("New Edge " + sourceOp.getName() + " to " + sinkOp.getName());
 			}
 			catch (Exception e){
 				mxCell[] toRemove = {edge};
 				graphComponent.getGraph().removeCells(toRemove);
-				System.out.println("BAD EDGE");
+				System.out.println(e);
 				return;
 			}
 		}
+	}
+	private class cellRemovalListener implements mxIEventListener{
+
+		@Override
+		public void invoke(Object sender, mxEventObject evt) {
+			
+			
+		}
+		
 	}
 	
 	private class MouseListener extends MouseAdapter{
@@ -142,7 +162,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		graphComponent.setDragEnabled(false);
 		getContentPane().add(graphComponent);
 		graphComponent.getGraphControl().addMouseListener(new MouseListener());
-		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener());
+		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener(this));
+		graphComponent.getConnectionHandler().addListener(mxEvent.REMOVE_CELLS, new EdgeListener(this));
 		popup = new JPopupMenu();
 		propMenuItm = new JMenuItem("Properties");
 		propMenuItm.addActionListener(this);

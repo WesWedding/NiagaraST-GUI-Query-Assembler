@@ -52,6 +52,7 @@ public class PropertyDialog implements ActionListener{
 	  for (String k : keys){
 		  JLabel lbl = new JLabel(k,JLabel.RIGHT);
 		  JTextField txt = new JTextField((String)reqAttribs.get(k), 10);
+		  txtBoxes.put(k, txt);
 		  lbl.setLabelFor(txt);
 		  attribPanel.add(lbl);
 		  attribPanel.add(txt);
@@ -62,7 +63,7 @@ public class PropertyDialog implements ActionListener{
 	  
 	  contentTextPanel = new JPanel();
 	  contentTextPanel.setLayout(new BoxLayout(contentTextPanel, BoxLayout.PAGE_AXIS));
-	  contentText = new JTextArea();
+	  contentText = new JTextArea(partnerNode.elements);
 	  contentTextPanel.add(new JLabel("Content Text"));
 	  contentTextPanel.add(contentText);
 	  
@@ -72,7 +73,7 @@ public class PropertyDialog implements ActionListener{
 	  commentTextPanel = new JPanel();
 	  commentTextPanel.setLayout(new BoxLayout(commentTextPanel,BoxLayout.PAGE_AXIS));
 	  commentTextPanel.add(new JLabel("Comment Text:"));
-	  commentText = new JTextArea();
+	  commentText = new JTextArea(partnerNode.comments);
 	  commentTextPanel.add(commentText);
 	  
 	  buttonPanel = new JPanel();
@@ -114,8 +115,9 @@ public class PropertyDialog implements ActionListener{
 		Set<String> keys = txtBoxes.keySet();
 		for (String k: keys){
 			String s = txtBoxes.get(k).getText();
-			if (s == "") s = null;
-			partnerNode.setAttribute(k, s);
+			String val = null;
+			if (!s.isEmpty()) val = s;
+			partnerNode.setAttribute(k, val);
 		}
 		partnerNode.comments = commentText.getText();
 		partnerNode.elements = contentText.getText();

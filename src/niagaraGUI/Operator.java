@@ -78,8 +78,33 @@ public class Operator {
     public HashMap<String,String> getOptionalAttributes() {
         return optAttribs;
     }
-    public void addInput(Operator input){
-    	//System.out.println(input.getClass());
-    	//not yet implemented
+    public boolean addInput(Operator input){
+    	String inName = input.getAttribute("id");
+    	if (inName == null || inName.isEmpty()){
+    		System.out.println("Input node has no id");
+    		return false;
+    	}
+    	String inputString = this.getAttribute("input");
+		ArrayList<String> ins;
+		if (inputString == null || inputString.isEmpty()){
+			ins = new ArrayList<String>();
+		}
+		else{
+			ins =  new ArrayList<String>(Arrays.asList(this.getAttribute("input").split(" ")));
+		}
+		
+		if (ins.contains(inName)){
+			return false;
+		}
+		else {
+			ins.add(inName);
+			String allIns = "";
+			for (String s : ins){
+				allIns += s + " ";
+			}
+			allIns = allIns.trim();
+			this.setAttribute("input", allIns);
+			return true;
+		}
     }
 }

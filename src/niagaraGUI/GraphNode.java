@@ -1,6 +1,8 @@
 package niagaraGUI;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.*;
@@ -101,6 +103,16 @@ public class GraphNode extends Operator implements Serializable {
 		graph.setAutoSizeCells(true);
 		graph.refresh();
 		graph.getModel().endUpdate();
+	}
+	
+	public boolean connect(GraphNode newInput){
+		boolean result = this.addInput(newInput);
+		this.update();
+		return result;
+	}
+	
+	public void disconnect(GraphNode toRemove){
+		
 	}
 
 }
