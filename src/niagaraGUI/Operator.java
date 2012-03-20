@@ -13,7 +13,6 @@ import org.xmlmiddleware.schemas.dtds.*;
 public class Operator {
     protected HashMap<String, String> reqAttribs; //String name, String value
     protected HashMap<String,String> optAttribs;  //String name, String value
-    protected Set<String> inputs;
     protected String elements; //houses xml code for any internal elements like predicates for Select
     protected String name;//This is name of operator NOT id
     protected String comments;//Comments to be inserted with this operators XML code
@@ -24,7 +23,6 @@ public class Operator {
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         reqAttribs = new HashMap<String,String>();
         optAttribs = new HashMap<String,String>();
-        inputs = new HashSet<String>();
         name = opTemplate.getName();
         //Sort out the required and optional attributes
         Iterator<Map.Entry<String, Attribute>> it = templateAttributes.entrySet().iterator();
@@ -64,18 +62,8 @@ public class Operator {
     public HashMap<String,String> getOptionalAttributes() {
         return optAttribs;
     }
-    public Set<String> getInputArray(){
-    	return inputs;
-    }
     public void addInput(Operator input){
     	//System.out.println(input.getClass());
-    	if (input != null && input instanceof Operator){
-    		String name = input.getName();
-    		if (name != null){
-	    		//System.out.println(name==null);
-	    		//System.out.println(name);
-	    		inputs.add(name);
-    		}
-    	}
+    	//not yet implemented
     }
 }
