@@ -44,9 +44,11 @@ public class QueryPlan {
     }
     
     public String getName() {
+    	//returns the name of this query plan
         return queryName;
     }
     public boolean addOperatorInstance(Operator newOp){
+    	//Adds a new instansiated operator to this queryplan
     	if (opList.contains(newOp)){
     		return false;
     	}
@@ -57,6 +59,7 @@ public class QueryPlan {
     	
     }
     public boolean removeOperatorInstance(Operator toRemove){
+    	//removes an instansiated from Operator from this query plan
     	if (opList.contains(toRemove)){
     		opList.remove(toRemove);
     		return true;
