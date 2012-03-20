@@ -130,9 +130,34 @@ public class GraphNode extends Operator implements Serializable {
 		return rtn;
 		
 	}
-	public boolean updateSinks(String oldID){
+	public boolean setAttribute(String name, String value){
+		String oldIdString = "";
+		boolean newId = false;
+		boolean result = false;
+		if (name == "id"){//attempting to change id
+			List<mxCell> edges = this.getOutgoingEdges();//get all outgoing edges
+			for (mxCell edge: edges){//loop over all edges to disconnect from this node
+				Operator op = (Operator)edge.getTarget().getValue();//get target operator
+				op.removeInput(this);
+			}
+			result = setAttribute(name,value);
+			for (mxCell edge: edges){//loop over all edges again to reconnect to this node
+				Operator op = (Operator)edge.getTarget().getValue();//get target operators
+				op.addInput(this);
+			}
+		}
+		else{
+			result = super.setAttribute(name, value);//set new value, hold result
+		}
+		return result;
+	}
+	protected boolean updateSinks(String oldID){
 		//this method updates all nodes which receive data from this node with this nodes new name
-		
+		List<mxCell> outEdges = getOutgoingEdges();
+		for (mxCell edge : outEdges){
+			GraphNode sink = (GraphNode) edge.getTarget().getParent();
+			sink.removeInput(sink);
+		}
 		return true;
 	}
 

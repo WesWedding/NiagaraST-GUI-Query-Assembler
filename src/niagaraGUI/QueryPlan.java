@@ -4,17 +4,17 @@ import java.util.*;
 
 public class QueryPlan {
     private String filename;
-    static private Hashtable<String, OperatorTemplate> opTemplates;
-    private List<Operator> opList;//
+    static private Hashtable<String, OperatorTemplate> opTemplates;//Table of operator templates indexed by operator name
+    private List<Operator> opList;//List of operator Instances in the current query plan
     private Operator top;//reference to the top operator
-    private String queryName;
+    private String queryName;//name of the query
     private DTDInterpreter dtdInterp;
             
     public QueryPlan(String name, String filename) {
         opTemplates = new Hashtable<String, OperatorTemplate>();
         dtdInterp = new DTDInterpreter(filename);
         opTemplates = dtdInterp.getTemplates();
-        
+        opList = new ArrayList<Operator>();
     }
     
     static public Hashtable<String, OperatorTemplate> getOpTemplates() {
@@ -26,7 +26,7 @@ public class QueryPlan {
     }
     
     public void generateXML(String filename) {
-        
+
     }
     public String[] getOperatorNames(){
     	if (opTemplates != null){
@@ -45,6 +45,25 @@ public class QueryPlan {
     
     public String getName() {
         return queryName;
+    }
+    public boolean addOperatorInstance(Operator newOp){
+    	if (opList.contains(newOp)){
+    		return false;
+    	}
+    	else{
+    		opList.add(newOp);
+    		return true;
+    	}
+    	
+    }
+    public boolean removeOperatorInstance(Operator toRemove){
+    	if (opList.contains(toRemove)){
+    		opList.remove(toRemove);
+    		return true;
+    	}
+    	else{
+    		return false;
+    	}
     }
     
     // This design pattern is in place to ease future import if

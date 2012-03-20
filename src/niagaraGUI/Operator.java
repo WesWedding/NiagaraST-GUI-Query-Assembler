@@ -50,7 +50,7 @@ public class Operator {
     	}
     	return null;
     }
-    public Boolean setAttribute(String name, String value) {
+    public boolean setAttribute(String name, String value) {
     	if (reqAttribs.containsKey(name)){
     		reqAttribs.put(name, value);
     		return true;

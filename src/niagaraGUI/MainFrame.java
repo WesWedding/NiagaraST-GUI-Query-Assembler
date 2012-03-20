@@ -50,7 +50,6 @@ public class MainFrame extends JFrame implements ActionListener {
 	private QueryPlan queryPlan;
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
-	private List<GraphNode> nodes;
 	private OperatorSelectorDialog opPicker;
 	
 	
@@ -109,19 +108,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		}
 	}
-	private class CellRemovalListener implements mxIEventListener{
-		JFrame master;
-		public CellRemovalListener(JFrame master){
-			this.master = master;
-		}
-		@Override
-		public void invoke(Object sender, mxEventObject evt) {
-			System.out.println(evt);
-			System.out.println("REMOVER INVOKED");
-			
-		}
-		
-	}
+	
 	private class KeyEventListener implements KeyListener{
 		JFrame master;
 		public KeyEventListener(JFrame master){
@@ -206,7 +193,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		buildMenus();
 		graph = new mxGraph();
 		parent = graph.getDefaultParent();
-		nodes = new ArrayList<GraphNode>();
 		graph.getModel().beginUpdate();
 		graph.setCellsEditable(false);
 		graph.setAutoSizeCells(true);
@@ -231,7 +217,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		getContentPane().add(graphComponent);
 		graphComponent.getGraphControl().addMouseListener(new MouseListener());
 		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener(this));
-		graphComponent.getConnectionHandler().addListener(mxEvent.CELLS_REMOVED, new CellRemovalListener(this));
 		graphComponent.addKeyListener(new KeyEventListener(this));
 		popup = new JPopupMenu();
 		propMenuItm = new JMenuItem("Properties");
@@ -288,7 +273,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			System.out.println(opName);
 			System.out.println(operatorTemplates.get(opName));
 			GraphNode newNode = new GraphNode(operatorTemplates.get(opName), graph, parent);
-			nodes.add(newNode);
+			queryPlan.addOperatorInstance(newNode);
 			newNode.draw();
 		}
 		catch (Exception e){
@@ -327,6 +312,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		for (mxCell e: edges){
 			removeConnection(e);
 		}
+		queryPlan.removeOperatorInstance(op);
 		mxCell[] toRemove = {operatorNode};
 		graph.removeCells(toRemove);
 		return false;
