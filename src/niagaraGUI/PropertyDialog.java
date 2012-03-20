@@ -3,54 +3,49 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Set;
 import java.awt.*;
-import javax.swing.*;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class PropertyDialog{
+import javax.swing.*;
+
+public class PropertyDialog implements ActionListener{
   JFrame frame;
   GraphNode partnerNode;
-  JPanel panel;
-  public class AttribPanel extends JPanel{
-	  JLabel lbl;
-	  JTextField txt;
-	  AttribPanel(String attrib, String value){
-		  super(new FlowLayout());
-		  lbl = new JLabel(attrib);
-		  txt = new JTextField(value, 15);
-		  lbl.setLabelFor(txt);
-		  this.add(lbl);
-		  this.add(txt);
-	  }
-  }
+  JPanel attribPanel;
+  JPanel contentTextPanel;
+  JPanel commentTextPanel;
+  JPanel buttonPanel;
+  JButton btnUpdate;
+  JButton btnCancel;
+  JTextArea commentText;
+  JTextArea contentText;
+  HashMap<String, JTextField> txtBoxes;
   public PropertyDialog(GraphNode n){
+	  txtBoxes = new HashMap<String, JTextField>();
 	  partnerNode = n;
 	  frame = new JFrame("Properties for " + partnerNode.getName());
-	  panel = new JPanel(new GridLayout(0,2));
-	  panel.add(new JLabel("Required Attributes"));
-	  panel.add(new JLabel(""));
-	  //panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+	  frame.setLayout(new GridLayout(0,1));
+	  attribPanel = new JPanel(new GridLayout(0,2));
+	  attribPanel.add(new JLabel("Required Attributes"));
+	  attribPanel.add(new JLabel(""));
+	  //attribPanel.setLayout(new BoxLayout(attribPanel, BoxLayout.PAGE_AXIS));
 	  HashMap<String,String> reqAttribs = partnerNode.getRequiredAttributes();
 	  Set<String> keys = reqAttribs.keySet();
 	  for (String k : keys){
 		  JLabel lbl = new JLabel(k,JLabel.RIGHT);
 		  JTextField txt = new JTextField((String)reqAttribs.get(k), 10);
+		  txtBoxes.put(k, txt);
 		  if (k.equals("input")){
 			  txt.setEditable(false);
 		  }
 		  lbl.setLabelFor(txt);
-		  panel.add(lbl);
-		  panel.add(txt);
-		  //panel.add(new AttribPanel(k, (String)reqAttribs.get(k)));
+		  attribPanel.add(lbl);
+		  attribPanel.add(txt);
+		  //attribPanel.add(new AttribPanel(k, (String)reqAttribs.get(k)));
 	  }
 	  
-	  panel.add(new JLabel("Optional Attributes"));
-	  panel.add(new JLabel(""));
+	  attribPanel.add(new JLabel("Optional Attributes"));
+	  attribPanel.add(new JLabel(""));
 	  
 	  HashMap<String,String> optAttribs = partnerNode.getOptionalAttributes();
 	  keys = optAttribs.keySet();
@@ -58,17 +53,73 @@ public class PropertyDialog{
 		  JLabel lbl = new JLabel(k,JLabel.RIGHT);
 		  JTextField txt = new JTextField((String)reqAttribs.get(k), 10);
 		  lbl.setLabelFor(txt);
-		  panel.add(lbl);
-		  panel.add(txt);
-		  //panel.add(new AttribPanel(k, (String)reqAttribs.get(k)));
+		  attribPanel.add(lbl);
+		  attribPanel.add(txt);
+		  //attribPanel.add(new AttribPanel(k, (String)reqAttribs.get(k)));
 	  }
 	  
-	  frame.add(panel);
+	  frame.add(attribPanel);
+	  
+	  contentTextPanel = new JPanel();
+	  contentTextPanel.setLayout(new BoxLayout(contentTextPanel, BoxLayout.PAGE_AXIS));
+	  contentText = new JTextArea();
+	  contentTextPanel.add(new JLabel("Content Text"));
+	  contentTextPanel.add(contentText);
+	  
+	  
+	  frame.add(contentTextPanel);
+	  
+	  commentTextPanel = new JPanel();
+	  commentTextPanel.setLayout(new BoxLayout(commentTextPanel,BoxLayout.PAGE_AXIS));
+	  commentTextPanel.add(new JLabel("Comment Text:"));
+	  commentText = new JTextArea();
+	  commentTextPanel.add(commentText);
+	  
+	  buttonPanel = new JPanel();
+	  buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
+	  btnUpdate = new JButton("Update");
+	  btnUpdate.addActionListener(this);
+	  btnCancel = new JButton("Cancel");
+	  btnCancel.addActionListener(this);
+	  buttonPanel.add(btnUpdate);
+	  buttonPanel.add(btnCancel);
+	  
+	  frame.add(commentTextPanel);
+	  
+	  
+	  
+	  frame.add(buttonPanel);
+	  
 	  frame.pack();
 	  //Dimension minSize = new Dimension(400,200);
 	  //frame.setMinimumSize(minSize);
 	  frame.setVisible(true);
 	  frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
   }
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		Object src = evt.getSource();
+		if (src == btnUpdate){
+			System.out.println("Update");
+			updatePartnerNode();
+		}
+		else if (src == btnCancel){
+			System.out.println("Cancel");
+			frame.hide();
+		}
+		
+	}
+	
+	private void updatePartnerNode(){
+		Set<String> keys = txtBoxes.keySet();
+		for (String k: keys){
+			String s = txtBoxes.get(k).getText();
+			if (s == "") s = null;
+			partnerNode.setAttribute(k, s);
+		}
+		partnerNode.comments = commentText.getText();
+		partnerNode.elements = contentText.getText();
+		partnerNode.update();
+	}
   
 }

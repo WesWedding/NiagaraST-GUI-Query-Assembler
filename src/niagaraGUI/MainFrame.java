@@ -42,7 +42,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private mxGraph graph;
 	private Object parent;
 	private JPopupMenu popup;
-	private JMenuItem propMenuItm;
+	private JMenuItem propMenuItm;//menu to bring up operator properties
+	private JMenuItem topMenuItm;//menu to set operator as top
 	private QueryPlan queryPlan;
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
@@ -145,6 +146,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		popup = new JPopupMenu();
 		propMenuItm = new JMenuItem("Properties");
 		propMenuItm.addActionListener(this);
+		topMenuItm = new JMenuItem("Set as top");
+		topMenuItm.addActionListener(this);
 		popup.add(propMenuItm);
 		
 		queryPlan = new QueryPlan("QP","queryplan.dtd");
@@ -183,9 +186,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		{
 			System.out.println(opName);
 			System.out.println(operatorTemplates.get(opName));
-			GraphNode newNode = new GraphNode(operatorTemplates.get(opName));
+			GraphNode newNode = new GraphNode(operatorTemplates.get(opName), graph, parent);
 			nodes.add(newNode);
-			newNode.draw(graph, parent);
+			newNode.draw();
 		}
 		catch (Exception e){
 			System.out.println(e);

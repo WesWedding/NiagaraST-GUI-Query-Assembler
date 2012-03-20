@@ -51,6 +51,14 @@ public class Operator {
     	return null;
     }
     public Boolean setAttribute(String name, String value) {
+    	if (reqAttribs.containsKey(name)){
+    		reqAttribs.put(name, value);
+    		return true;
+    	}
+    	else if (optAttribs.containsKey(name)){
+    		optAttribs.put(name, value);
+    		return true;
+    	}
         return false;
     }
     

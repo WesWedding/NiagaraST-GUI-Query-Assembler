@@ -16,6 +16,9 @@ public class GraphNode extends Operator implements Serializable {
 	private mxCell portOut;
 	private mxCell mainBox;
 	private mxCell opGroup;
+	private mxGraph graph;
+	private Object parent;
+	
 	
 	public class IOPort extends mxCell{
 		private boolean input = false;
@@ -31,30 +34,33 @@ public class GraphNode extends Operator implements Serializable {
 		}
 	}
 	
-	public GraphNode(OperatorTemplate opTemplate){
+	public GraphNode(OperatorTemplate opTemplate, mxGraph grph, Object prnt){
 		super(opTemplate);
+		graph = grph;
+		parent = prnt;
 	}
 
 	
 	public String toString(){
 		String s = new String();
-		s += this.name + '\n';
+		s += "\n"+this.name + '\n';
 		s += "Required Attributes: " + '\n';
 		Set<String> reqAttKeys = reqAttribs.keySet();
-		Iterator rkeysit = reqAttKeys.iterator();
-		while(rkeysit.hasNext()){
-			s += '\t' + (String)rkeysit.next() +'\n';
+		String val;
+		for(String k : reqAttKeys){
+			val = reqAttribs.get(k);
+			s += '\t' + k + ":\t"+val +'\n';
 		}
 		s += "Optional Attributes: " + '\n';
 		Set<String> optAttKeys = optAttribs.keySet();
-		Iterator okeysit = optAttKeys.iterator();
-		while(okeysit.hasNext()){
-			s += '\t' + (String)okeysit.next() +'\n';
+		for(String k : optAttKeys){
+			val = optAttribs.get(k);
+			s += '\t' + k+":\t"+val +'\n';
 		}
 		return s;
 	}
 	
-	public void draw(mxGraph graph, Object parent){
+	public void draw(){
 		int PORT_DIAMETER=15;
 		int PORT_RADIUS=10;
 		mainBox = (mxCell) graph.insertVertex(parent, null, this, 20, 20, 80,
@@ -88,6 +94,13 @@ public class GraphNode extends Operator implements Serializable {
 		
 		graph.addCell(portIn, mainBox);
 		graph.addCell(portOut, mainBox);
+	}
+	
+	public void update(){
+		graph.getModel().beginUpdate();
+		graph.setAutoSizeCells(true);
+		graph.refresh();
+		graph.getModel().endUpdate();
 	}
 
 }
