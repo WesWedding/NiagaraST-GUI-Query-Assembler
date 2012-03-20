@@ -46,6 +46,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPopupMenu popup;
 	private JMenuItem propMenuItm;//menu to bring up operator properties
 	private JMenuItem topMenuItm;//menu to set operator as top
+	private JMenuItem exportXMLMenuItm;
 	private QueryPlan queryPlan;
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
@@ -160,7 +161,28 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		
 	}
-	
+	private class MenuListener implements ActionListener{
+		JFrame master;
+		public MenuListener(JFrame master){
+			this.master = master;
+		}
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			if (evt.getSource() == exportXMLMenuItm ){
+				//Create a file chooser
+				final JFileChooser fc = new JFileChooser();
+				
+				int returnVal = fc.showSaveDialog(master);
+				if (returnVal == fc.APPROVE_OPTION){
+					String fileName = fc.getSelectedFile().getAbsolutePath();
+					//System.out.println(fileName);
+					queryPlan.generateXML(fileName);
+				}
+			}
+			
+		}
+		
+	}
 	private class MouseListener extends MouseAdapter{
 		@Override
         public void mousePressed(MouseEvent e) {
@@ -181,6 +203,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 	
 	private void initComponents(){
+		buildMenus();
 		graph = new mxGraph();
 		parent = graph.getDefaultParent();
 		nodes = new ArrayList<GraphNode>();
@@ -228,6 +251,17 @@ public class MainFrame extends JFrame implements ActionListener {
 	/**
 	 * @param args
 	 */
+	private void buildMenus(){
+		JMenuBar menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+		exportXMLMenuItm = new JMenuItem("Export XML");
+		fileMenu.add(exportXMLMenuItm);
+		exportXMLMenuItm.addActionListener(new MenuListener(this));
+		
+		this.setJMenuBar(menuBar);
+	}
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MainFrame frame = new MainFrame();

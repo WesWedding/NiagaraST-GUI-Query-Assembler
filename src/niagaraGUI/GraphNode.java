@@ -133,6 +133,7 @@ public class GraphNode extends Operator implements Serializable {
 	public boolean updateSinks(String oldID){
 		//this method updates all nodes which receive data from this node with this nodes new name
 		
+		return true;
 	}
 
 }
