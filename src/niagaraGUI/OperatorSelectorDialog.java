@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -15,13 +17,14 @@ import javax.swing.JScrollPane;
 public class OperatorSelectorDialog implements ActionListener{
 	private JFrame frame;
 	private JList opList;
-	private String[] opNames;
+	private List<String> opNames;
 	private JButton addBtn;
 	private Container content;
 	private MainFrame master;
-	public OperatorSelectorDialog(String[] opNames, MainFrame masterFrame){
+	public OperatorSelectorDialog(List<String> opNames, MainFrame masterFrame){
 		super();
 		this.opNames = opNames;
+		Collections.sort(this.opNames);
 		this.master = masterFrame;
 		initComponents();
 		
@@ -31,7 +34,7 @@ public class OperatorSelectorDialog implements ActionListener{
 		content = frame.getContentPane();
 	    content.setLayout(new GridLayout(0,1));
 	    
-	    opList = new JList(opNames);
+	    opList = new JList(opNames.toArray());
 		JScrollPane listScroller = new JScrollPane(opList);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		content.add(listScroller);

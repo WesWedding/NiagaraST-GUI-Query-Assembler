@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -55,37 +56,42 @@ public class MainFrame extends JFrame implements ActionListener {
 	private class EdgeListener implements mxIEventListener{
 		@Override //Edge creation
 		public void invoke(Object sender, mxEventObject evt) {
-			// TODO Auto-generated method stub
 			mxCell edge = (mxCell) evt.getProperty("cell");
-			
 			GraphNode.IOPort out = (GraphNode.IOPort) edge.getSource();// gives the source cell
 			GraphNode.IOPort in = (GraphNode.IOPort) edge.getTarget();//gives the target cell
 			GraphNode sourceOp;
 			GraphNode sinkOp;
-			if (in.isInput() && out.isOutput()){//good edge
-				System.out.println("GOOD EDGE");
+			try{
+				if (in.isInput() && out.isOutput()){//good edge
+					System.out.println("GOOD EDGE");
+				}
+				else if (in.isOutput() && out.isInput()){//backwards edge
+					System.out.println("BACKWARDS EDGE");
+					
+					edge.setTerminal(out, false);
+					edge.setTerminal(in, true);
+					graphComponent.getGraph().addCell(edge);
+					GraphNode.IOPort hold = out;
+					out = in;
+					in = hold;
+				}
+				else{//bad edge
+					throw new Exception("BAD EDGE");
+				}
+				sourceOp = (GraphNode)out.getParent().getValue();
+				sinkOp = (GraphNode)in.getParent().getValue();
+				if (sourceOp == sinkOp){//self input, no good!
+					throw new Exception("BAD EDGE");
+				}
+				sinkOp.addInput(sourceOp);
+				System.out.println("New Edge " + sourceOp.getName() + " to " + sinkOp.getName());
 			}
-			else if (in.isOutput() && out.isInput()){//backwards edge
-				System.out.println("BACKWARDS EDGE");
-				mxCell[] toRemove = {edge};
-				graphComponent.getGraph().removeCells(toRemove);
-				edge.setTerminal(out, false);
-				edge.setTerminal(in, true);
-				graphComponent.getGraph().addCell(edge);
-				GraphNode.IOPort hold = out;
-				out = in;
-				in = hold;
-			}
-			else{//bad edge
+			catch (Exception e){
 				mxCell[] toRemove = {edge};
 				graphComponent.getGraph().removeCells(toRemove);
 				System.out.println("BAD EDGE");
 				return;
 			}
-			sourceOp = (GraphNode)out.getParent().getValue();
-			sinkOp = (GraphNode)in.getParent().getValue();
-			sinkOp.addInput(sourceOp);
-			System.out.println("New Edge " + sourceOp.getName() + " to " + sinkOp.getName());
 		}
 	}
 	
@@ -103,6 +109,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	
 	public MainFrame(){
 		super();
+		Dimension minSize = new Dimension(400,200);
+		this.setMinimumSize(minSize);
 		initComponents();
 	}
 	
@@ -142,7 +150,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		queryPlan = new QueryPlan("QP","queryplan.dtd");
 		operatorTemplates = queryPlan.getOpTemplates();
 		operatorNames = queryPlan.getOperatorNames();
-		opPicker = new OperatorSelectorDialog(operatorNames, this);
+		List ops = Arrays.asList(operatorNames);
+		opPicker = new OperatorSelectorDialog(ops, this);
 		
 		graph.getModel().endUpdate();
 	}
