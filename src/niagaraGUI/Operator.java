@@ -41,7 +41,15 @@ public class Operator {
     public String getName(){
     	return this.name;
     }
-    
+    public String getAttribute(String attrib){
+    	if (reqAttribs.containsKey(attrib)){
+    		return reqAttribs.get(attrib);
+    	}
+    	else if(optAttribs.containsKey(attrib)){
+    		return optAttribs.get(attrib);
+    	}
+    	return null;
+    }
     public Boolean setAttribute(String name, String value) {
         return false;
     }
