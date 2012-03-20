@@ -79,32 +79,66 @@ public class Operator {
         return optAttribs;
     }
     public boolean addInput(Operator input){
-    	String inName = input.getAttribute("id");
-    	if (inName == null || inName.isEmpty()){
-    		System.out.println("Input node has no id");
+    	String inName = input.getAttribute("id");//get the id of input to add
+    	if (inName == null || inName.isEmpty()){//make sure input has a valid name
+    		System.out.println("Input node has no id");//no valid name, print warning and abort
     		return false;
     	}
-    	String inputString = this.getAttribute("input");
-		ArrayList<String> ins;
-		if (inputString == null || inputString.isEmpty()){
-			ins = new ArrayList<String>();
+    	String inputString = this.getAttribute("input");//get the input string for this op
+		ArrayList<String> ins;//delcare an array list
+		if (inputString == null || inputString.isEmpty()){//if the input string is empty
+			ins = new ArrayList<String>();//make an empty array list
 		}
-		else{
+		else{//input string is not empty
+			//split input into ArrayList at spaces
+			ins =  new ArrayList<String>(Arrays.asList(this.getAttribute("input").split(" ")));
+		}
+		if (ins.contains(inName)){//check if input is already present
+			return false;//input already present, abort
+		}
+		else {//input is not yet present
+			ins.add(inName);//add input to array list
+			String allIns = "";// empty string to hold list of inputs
+			for (String s : ins){//iterate over inputs
+				allIns += s + " ";//append input name to string with space
+			}
+			allIns = allIns.trim();//remove trailing space
+			this.setAttribute("input", allIns);//set intput attribute to this string of inputs
+			return true;//success! return true
+		}
+    }
+    public boolean removeInput(Operator input){
+    	String inName = input.getAttribute("id");//get the name if input to remove from this
+    	if (inName == null || inName.isEmpty()){//no name of input to remove
+    		System.out.println("Input node has no id");//warn
+    		return false;//no valid input name to remove, abort
+    	}
+    	String inputString = this.getAttribute("input");// get string listing input names for this
+		ArrayList<String> ins;//declare an array list
+		if (inputString == null || inputString.isEmpty()){//empty list to remove from
+			return false;//nothing to remove, abort
+		}
+		else{//input string is not empty
+			//split input string at spaces and make new array list
 			ins =  new ArrayList<String>(Arrays.asList(this.getAttribute("input").split(" ")));
 		}
 		
-		if (ins.contains(inName)){
-			return false;
+		if (!ins.contains(inName)){//input is not present to be removed
+			return false;//no input to remove, abort
 		}
-		else {
-			ins.add(inName);
-			String allIns = "";
-			for (String s : ins){
-				allIns += s + " ";
+		else{//remove the input
+			ins.remove(inName);//remove the desired input.
+			
+			//rebuild input string
+			String allIns = "";// empty string to hold list of inputs
+			for (String s : ins){//iterate over inputs
+				allIns += s + " ";//append input name to string with space
 			}
-			allIns = allIns.trim();
-			this.setAttribute("input", allIns);
-			return true;
+			allIns = allIns.trim();//remove trailing space
+			this.setAttribute("input", allIns);//set intput attribute to this string of inputs
+			return true;//success! return true
 		}
+		
+    	
     }
 }

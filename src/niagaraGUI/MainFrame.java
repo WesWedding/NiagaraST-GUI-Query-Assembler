@@ -3,6 +3,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -106,11 +108,54 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		}
 	}
-	private class cellRemovalListener implements mxIEventListener{
-
+	private class CellRemovalListener implements mxIEventListener{
+		JFrame master;
+		public CellRemovalListener(JFrame master){
+			this.master = master;
+		}
 		@Override
 		public void invoke(Object sender, mxEventObject evt) {
+			System.out.println(evt);
+			System.out.println("REMOVER INVOKED");
 			
+		}
+		
+	}
+	private class KeyEventListener implements KeyListener{
+		JFrame master;
+		public KeyEventListener(JFrame master){
+			this.master = master;
+		}
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+			
+			
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			switch(e.getKeyCode()){
+			case KeyEvent.VK_DELETE:
+			case KeyEvent.VK_BACK_SPACE:
+				System.out.println("DELETE KEY PRESSED");
+				mxCell toDelete = (mxCell) graph.getSelectionCell();
+				if (toDelete.isEdge()){
+					System.out.println("EDGE REMOVAL");
+					removeConnection(toDelete);
+				}
+				else if (toDelete.isVertex()){
+					System.out.println("VERTEX REMOVAL");
+					removeOperator(toDelete);
+				}
+				
+				
+			}
+			
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+			// TODO Auto-generated method stub
 			
 		}
 		
@@ -163,7 +208,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		getContentPane().add(graphComponent);
 		graphComponent.getGraphControl().addMouseListener(new MouseListener());
 		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener(this));
-		graphComponent.getConnectionHandler().addListener(mxEvent.REMOVE_CELLS, new EdgeListener(this));
+		graphComponent.getConnectionHandler().addListener(mxEvent.CELLS_REMOVED, new CellRemovalListener(this));
+		graphComponent.addKeyListener(new KeyEventListener(this));
 		popup = new JPopupMenu();
 		propMenuItm = new JMenuItem("Properties");
 		propMenuItm.addActionListener(this);
@@ -221,7 +267,36 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		return true;
 	}
-
+	
+	public boolean removeConnection(mxCell connectionEdge){
+		GraphNode.IOPort out = (GraphNode.IOPort) connectionEdge.getSource();// gives the source cell
+		GraphNode.IOPort in = (GraphNode.IOPort) connectionEdge.getTarget();//gives the target cell
+		
+		GraphNode sourceOp = (GraphNode)out.getParent().getValue();
+		GraphNode sinkOp = (GraphNode)in.getParent().getValue();
+		boolean result = sinkOp.disconnect(sourceOp);
+		mxCell[] toRemove = {connectionEdge};
+		graph.removeCells(toRemove);
+		
+		return result;
+	}
+	public boolean removeOperator(mxCell operatorNode){
+		GraphNode op;
+		if (operatorNode instanceof GraphNode.IOPort){
+			op = (GraphNode)operatorNode.getParent().getValue();
+			operatorNode = (mxCell)operatorNode.getParent();
+		}
+		else{
+			op = (GraphNode)operatorNode.getValue();
+		}
+		List<mxCell> edges = op.getOutgoingEdges();
+		for (mxCell e: edges){
+			removeConnection(e);
+		}
+		mxCell[] toRemove = {operatorNode};
+		graph.removeCells(toRemove);
+		return false;
+	}
 
 		
 

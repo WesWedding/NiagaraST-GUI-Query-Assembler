@@ -1,6 +1,8 @@
 package niagaraGUI;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -111,7 +113,25 @@ public class GraphNode extends Operator implements Serializable {
 		return result;
 	}
 	
-	public void disconnect(GraphNode toRemove){
+	public boolean disconnect(GraphNode toRemove){
+		boolean result = this.removeInput(toRemove);
+		this.update();
+		return result;
+	}
+	public List<mxCell> getOutgoingEdges(){
+		//returns a hash table where the key is a graph node connecting to this GraphNode
+		//and the value is the edge of type mxCell which connects this to the key GraphNode
+		List<mxCell> rtn = new ArrayList<mxCell>();
+		int edgeCount = this.portOut.getEdgeCount();
+		for (int i=0; i<edgeCount; i++){
+			mxCell m = (mxCell) this.portOut.getEdgeAt(i);
+			rtn.add(m);
+		}
+		return rtn;
+		
+	}
+	public boolean updateSinks(String oldID){
+		//this method updates all nodes which receive data from this node with this nodes new name
 		
 	}
 
