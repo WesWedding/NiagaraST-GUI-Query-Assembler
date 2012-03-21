@@ -99,6 +99,8 @@ public class GraphNode extends Operator implements Serializable {
 		
 		graph.addCell(portIn, mainBox);
 		graph.addCell(portOut, mainBox);
+		graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#bfbfef", new Object[]{this.mainBox,this.portIn,this.portOut});
+		graph.setCellStyles(mxConstants.STYLE_FOLDABLE, "false", new Object[]{this.mainBox,this.portIn,this.portOut});
 	}
 	
 	public void update(){
@@ -145,15 +147,16 @@ public class GraphNode extends Operator implements Serializable {
 		String oldIdString = "";
 		boolean newId = false;
 		boolean result = false;
-		if (name == "id"){//attempting to change id
+		if (name.equals("id")){//attempting to change id
+			System.out.println("Cascade");
 			List<mxCell> edges = this.getOutgoingEdges();//get all outgoing edges
 			for (mxCell edge: edges){//loop over all edges to disconnect from this node
-				Operator op = (Operator)edge.getTarget().getValue();//get target operator
+				Operator op = (Operator)edge.getTarget().getParent().getValue();//get target operator
 				op.removeInput(this);
 			}
-			result = setAttribute(name,value);
+			result = super.setAttribute(name,value);
 			for (mxCell edge: edges){//loop over all edges again to reconnect to this node
-				Operator op = (Operator)edge.getTarget().getValue();//get target operators
+				Operator op = (Operator)edge.getTarget().getParent().getValue();//get target operators
 				op.addInput(this);
 			}
 		}

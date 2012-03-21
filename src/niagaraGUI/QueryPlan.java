@@ -149,11 +149,17 @@ public class QueryPlan {
     public String getInternalDTDFileName(){
     	return this.internalDTDfilename;
     }
+    public String getExternalDTDFileName(){
+    	return this.externalDTDfilename;
+    }
     public void setInternalDTDFileName(String newInternalDTDFileName){
     	opTemplates = new Hashtable<String, OperatorTemplate>();
         this.internalDTDfilename = newInternalDTDFileName;
         dtdInterp = new DTDInterpreter(this.internalDTDfilename);
         opTemplates = dtdInterp.getTemplates();
+    }
+    public void setExternalDTDFileName(String newExternalDTDFileName){
+    	this.externalDTDfilename = newExternalDTDFileName;
     }
     public boolean addOperatorInstance(Operator newOp){
         //Adds a new instansiated operator to this queryplan
