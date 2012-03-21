@@ -49,10 +49,12 @@ public class MainFrame extends JFrame {
 	private JPopupMenu popup;
 	private JMenuItem propMenuItm;//menu to bring up operator properties
 	private JMenuItem topMenuItm;//menu to set operator as top
-	private JMenuItem exportXMLMenuItm;
-	private JMenuItem setInternalDTDMenuItm;
-	private JMenuItem setExternalDTDMenuItm;
-	private QueryPlan queryPlan;
+	private JMenuItem saveQPMenuItm;//menu item to save queryplan
+	private JMenuItem loadQPMenuItm;//menu item to save queryplan
+	private JMenuItem exportXMLMenuItm;//menu item to export queryplan as xml file
+	private JMenuItem setInternalDTDMenuItm;//menu item to set external dtd file
+	private JMenuItem setExternalDTDMenuItm;//menu item to set internal dtd file
+	private QueryPlan queryPlan;//the current query plan being edited
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
 	private OperatorSelectorDialog opPicker;
@@ -111,6 +113,7 @@ public class MainFrame extends JFrame {
 				System.out.println(e);
 				return;
 			}
+			queryPlan.addEdge(edge);
 		}
 	}
 	
@@ -194,6 +197,12 @@ public class MainFrame extends JFrame {
 			}
 			else if (evt.getSource() == setExternalDTDMenuItm){
 				chooseExternalDTD();
+			}
+			else if(evt.getSource() == saveQPMenuItm){
+				saveQueryPlan();
+			}
+			else if(evt.getSource() == loadQPMenuItm){
+				loadQueryPlan();
 			}
 			
 		}
@@ -284,6 +293,15 @@ public class MainFrame extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
+		
+		saveQPMenuItm = new JMenuItem("Save Query Plan");
+		fileMenu.add(saveQPMenuItm);
+		saveQPMenuItm.addActionListener(ml);
+		
+		loadQPMenuItm = new JMenuItem("Open Query Plan");
+		fileMenu.add(loadQPMenuItm);
+		loadQPMenuItm.addActionListener(ml);
+		
 		exportXMLMenuItm = new JMenuItem("Export XML");
 		fileMenu.add(exportXMLMenuItm);
 		exportXMLMenuItm.addActionListener(ml);
@@ -396,6 +414,59 @@ public class MainFrame extends JFrame {
 		opPicker.hide();
 		opPicker = new OperatorSelectorDialog(ops, this);
 		return true;
+	}
+	public void saveQueryPlan(){
+		JFileChooser fc = new JFileChooser();
+		FileFilter chooser = new FileFilter() {
+	        public boolean accept(File f) {
+	          return f.getName().toLowerCase().endsWith(".nqp")
+	              || f.isDirectory();
+	        }
+
+	        public String getDescription() {
+	          return "NiagaraST GUI Query Plan Files";
+	        }
+	      };
+	      fc.addChoosableFileFilter(chooser);
+	      int returnVal = fc.showSaveDialog(this);
+	      if (returnVal == fc.APPROVE_OPTION){
+				queryPlan.serialize(fc.getSelectedFile().getAbsolutePath());
+			}
+	}
+	public void loadQueryPlan(){
+		JFileChooser fc = new JFileChooser();
+		FileFilter chooser = new FileFilter() {
+	        public boolean accept(File f) {
+	          return f.getName().toLowerCase().endsWith(".nqp")
+	              || f.isDirectory();
+	        }
+
+	        public String getDescription() {
+	          return "NiagaraST GUI Query Plan Files";
+	        }
+	      };
+	      fc.addChoosableFileFilter(chooser);
+	      int returnVal = fc.showOpenDialog(this);
+	      if (returnVal == fc.APPROVE_OPTION){
+				queryPlan.deserialize(fc.getSelectedFile().getAbsolutePath());
+			}
+	      List<Operator> opList = queryPlan.getOperatorInstanceList();
+	      for (Operator o:opList){
+	    	  GraphNode gn = (GraphNode)o;
+	    	  gn.setGraphAndParent(this.graph, this.parent);
+	    	  try{
+	    		  gn.reDraw();
+	    		  gn.update();
+	    	  }
+	    	  catch(Exception e){
+	    		  System.out.println(e);
+	    	  }
+	      }
+	      List<Object> edges = queryPlan.getEdges();
+	      for (Object edge : edges){
+	    	  mxCell edgeCell = (mxCell)edge;
+	    	  graph.addCell(edgeCell);
+	      }
 	}
 
 		

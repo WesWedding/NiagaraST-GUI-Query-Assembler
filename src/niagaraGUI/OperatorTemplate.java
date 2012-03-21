@@ -3,7 +3,7 @@ package niagaraGUI;
 import java.util.*;
 import org.xmlmiddleware.schemas.dtds.*;
 
-public class OperatorTemplate {
+public class OperatorTemplate implements java.io.Serializable{
     private String name;
     private HashMap<String, Attribute> attributes;
     private HashMap<String, ElementType> subElements;

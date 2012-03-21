@@ -2,8 +2,13 @@ package niagaraGUI;
 
 import java.util.*;
 import org.jdom.*;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -14,14 +19,15 @@ import org.jdom.*;
 import org.jdom.input.*;
 import org.jdom.output.*;
 
-public class QueryPlan {
+public class QueryPlan implements java.io.Serializable {
     private String internalDTDfilename;//local DTD to populate the opTemplates
     private String externalDTDfilename;//external DTD path which will be written in xml file
     static private Hashtable<String, OperatorTemplate> opTemplates;//Table of operator templates indexed by operator name
     private List<Operator> opList;//List of operator Instances in the current query plan
+    private List<Object> edges;//Stores jGraph Edge objects connecting operators 
     private Operator top;//reference to the top operator, top is also in opList
     private String queryName;//name of this query
-    private DTDInterpreter dtdInterp;//a dtd interpreter reference
+    transient private DTDInterpreter dtdInterp;//a dtd interpreter reference
             
     public QueryPlan(String name, String internalDTDfilename) {
         opTemplates = new Hashtable<String, OperatorTemplate>();
@@ -30,6 +36,8 @@ public class QueryPlan {
         dtdInterp = new DTDInterpreter(this.internalDTDfilename);
         opTemplates = dtdInterp.getTemplates();
         opList = new ArrayList<Operator>();
+        edges = new ArrayList<Object>();
+        
     }
     
     static public Hashtable<String, OperatorTemplate> getOpTemplates() {
@@ -183,6 +191,51 @@ public class QueryPlan {
         }
     }
     
+    public void serialize(String fileName){
+    	FileOutputStream fos = null;
+    	ObjectOutputStream out = null;
+    	try{
+    		fos = new FileOutputStream(fileName);
+    		out = new ObjectOutputStream(fos);
+    		out.writeObject(this);
+    		out.close();
+    	}
+    	catch(IOException ex){
+    		ex.printStackTrace();
+    	}
+    }
+    public void deserialize(String fileName){
+    	QueryPlan qp = null;
+        try
+        {
+           FileInputStream fileIn = new FileInputStream(fileName);
+           ObjectInputStream in = new ObjectInputStream(fileIn);
+           qp = (QueryPlan) in.readObject();
+           in.close();
+           fileIn.close();
+           this.externalDTDfilename = qp.externalDTDfilename;
+           this.internalDTDfilename = qp.internalDTDfilename;
+           dtdInterp = new DTDInterpreter(this.internalDTDfilename);
+           this.opTemplates = new Hashtable<String, OperatorTemplate>();
+           this.opTemplates = dtdInterp.getTemplates();
+           this.opList = qp.opList;
+           this.edges = qp.edges;
+       }catch(IOException i)
+       {
+           i.printStackTrace();
+           return;
+       }catch(ClassNotFoundException c)
+       {
+           System.out.println("QueryPlan class not found");
+           c.printStackTrace();
+           return;
+       }
+    }
+    
+    public List<Operator> getOperatorInstanceList(){
+    	return this.opList;
+    }
+    
     // This design pattern is in place to ease future import if
     // additional types are added
     public Boolean parse(String filename) {
@@ -214,6 +267,16 @@ public class QueryPlan {
     }
     public Operator getTop(){
         return top;
+    }
+    public boolean addEdge(Object edge){
+    	if (this.edges.contains(edge)) return false;
+    	else{
+    		this.edges.add(edge);
+    		return true;
+    	}
+    }
+    public List<Object> getEdges(){
+    	return this.edges;
     }
     
     // Code credit: Elliotte Rusty Harold

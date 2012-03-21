@@ -21,9 +21,9 @@ public class GraphNode extends Operator implements Serializable {
 	private mxCell portOut;
 	private mxCell mainBox;
 	private mxCell opGroup;
-	private mxGraph graph;
-	private Object parent;
-	private PropertyDialog propertyDialog;
+	transient private mxGraph graph;
+	transient private Object parent;
+	transient private PropertyDialog propertyDialog;
 	
 	
 	public class IOPort extends mxCell{
@@ -65,7 +65,49 @@ public class GraphNode extends Operator implements Serializable {
 		return s;
 	}
 	
-	public void draw(){
+	
+	public void setGraphAndParent(mxGraph graph, Object prnt){
+		this.graph = graph;
+		this.parent = prnt;
+	}
+	public void reDraw() throws Exception{
+		if (graph == null) throw new Exception("No graph");
+		//mainBox.setStyle("")
+		graph.addCell(mainBox);
+		graph.updateCellSize(mainBox);
+		mainBox.setConnectable(false);
+		//mxGeometry geo1 = new mxGeometry(-0.05, 0.5, PORT_DIAMETER,
+				//PORT_DIAMETER);
+		
+
+
+		// Because the origin is at upper left corner, need to translate to
+		// position the center of port correctly
+		//geo1.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
+		//geo1.setRelative(true);
+		//geo1.setAlternateBounds(new mxRectangle(0,0,geo1.getHeight(),geo1.getWidth()));
+	
+
+		//portIn = new IOPort(">", geo1,null,true);
+		//portIn.setVertex(true);
+
+		//mxGeometry geo2 = new mxGeometry(1.05, 0.5, PORT_DIAMETER,
+				//PORT_DIAMETER);
+		//geo2.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
+		//geo2.setRelative(true);
+		//geo2.setAlternateBounds(new mxRectangle(0,0,geo2.getHeight(),geo2.getWidth()));
+
+		//portOut = new IOPort(">", geo2,null,false);
+		//portOut.setVertex(true);
+		
+		graph.addCell(portIn, mainBox);
+		graph.addCell(portOut, mainBox);
+		graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#bfbfef", new Object[]{this.mainBox,this.portIn,this.portOut});
+		graph.setCellStyles(mxConstants.STYLE_FOLDABLE, "false", new Object[]{this.mainBox,this.portIn,this.portOut});
+	
+	}
+	public void draw() throws Exception{
+		if (graph == null) throw new Exception("No graph");
 		int PORT_DIAMETER=15;
 		int PORT_RADIUS=10;
 		mainBox = (mxCell) graph.insertVertex(parent, null, this, 20, 20, 80,

@@ -11,7 +11,7 @@ import org.xmlmiddleware.schemas.dtds.*;
  *
  */
 
-public class Operator {
+public class Operator implements java.io.Serializable{
     protected HashMap<String, String> reqAttribs; //String name, String value
     protected HashMap<String,String> optAttribs;  //String name, String value
     protected String elements; //houses xml code for any internal elements like predicates for Select
