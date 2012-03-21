@@ -3,6 +3,7 @@ package niagaraGUI;
 import java.util.*;
 import org.jdom.*;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -48,6 +49,25 @@ public class QueryPlan implements java.io.Serializable {
         return opTemplates.put(opTemplate.getName(), opTemplate);      
     }
     
+    public void generateXMLString(String fileName){
+    	String s = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plan SYSTEM ";
+    	 s += "\"" + this.externalDTDfilename + "\">\n";
+    	 s += "<plan top=\"" + this.top.getAttribute("id") + "\">\n";
+    	 for (Operator o : this.opList){
+    		 s += o.generateXMLString() + "\n";
+    	 }
+    	 s += "</plan>";
+    	 
+    	 try{
+	    	 FileWriter fstream = new FileWriter(fileName);
+	    	 BufferedWriter out = new BufferedWriter(fstream);
+	    	 out.write(s);
+	    	 out.close();
+    	 }
+    	 catch(IOException e){
+    		 System.out.println("bad file");
+    	 }
+    }
     public void generateXML(String filename) {
         try{
             String name;
