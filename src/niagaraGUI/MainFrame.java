@@ -30,6 +30,7 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -49,6 +50,7 @@ public class MainFrame extends JFrame {
 	private JPopupMenu popup;
 	private JMenuItem propMenuItm;//menu to bring up operator properties
 	private JMenuItem topMenuItm;//menu to set operator as top
+	private JMenuItem newQPMenuItm;//menu item to load a blank query
 	private JMenuItem saveQPMenuItm;//menu item to save queryplan
 	private JMenuItem loadQPMenuItm;//menu item to save queryplan
 	private JMenuItem exportXMLMenuItm;//menu item to export queryplan as xml file
@@ -172,7 +174,7 @@ public class MainFrame extends JFrame {
 				if (returnVal == fc.APPROVE_OPTION){
 					String fileName = fc.getSelectedFile().getAbsolutePath();
 					//System.out.println(fileName);
-					queryPlan.generateXML(fileName);
+					queryPlan.generateXMLString(fileName);
 				}
 			}
 			else if (evt.getSource() == propMenuItm){
@@ -207,6 +209,9 @@ public class MainFrame extends JFrame {
 			}
 			else if(evt.getSource() == toggleOperatorSelectorVisMenuItm){
 				opPicker.toggleVisible();
+			}
+			else if(evt.getSource() == newQPMenuItm){
+				resetQueryPlan();
 			}
 			
 		}
@@ -301,6 +306,10 @@ public class MainFrame extends JFrame {
 		this.toggleOperatorSelectorVisMenuItm = new JMenuItem("Show/Hide Operator Picker");
 		viewMenu.add(toggleOperatorSelectorVisMenuItm);
 		toggleOperatorSelectorVisMenuItm.addActionListener(ml);
+		
+		newQPMenuItm = new JMenuItem("New Query Plan");
+		fileMenu.add(newQPMenuItm);
+		newQPMenuItm.addActionListener(ml);
 		
 		saveQPMenuItm = new JMenuItem("Save Query Plan");
 		fileMenu.add(saveQPMenuItm);
@@ -442,6 +451,7 @@ public class MainFrame extends JFrame {
 			}
 	}
 	public void loadQueryPlan(){
+		
 		JFileChooser fc = new JFileChooser();
 		FileFilter chooser = new FileFilter() {
 	        public boolean accept(File f) {
@@ -456,6 +466,7 @@ public class MainFrame extends JFrame {
 	      fc.addChoosableFileFilter(chooser);
 	      int returnVal = fc.showOpenDialog(this);
 	      if (returnVal == fc.APPROVE_OPTION){
+	    	  	resetQueryPlan();
 				queryPlan.deserialize(fc.getSelectedFile().getAbsolutePath());
 			}
 	      List<Operator> opList = queryPlan.getOperatorInstanceList();
@@ -475,6 +486,19 @@ public class MainFrame extends JFrame {
 	    	  mxCell edgeCell = (mxCell)edge;
 	    	  graph.addCell(edgeCell);
 	      }
+	}
+	public void resetQueryPlan(){
+		File directory = new File (".");//get working director
+		String dir = directory.getAbsolutePath();//get directory
+		dir = dir.substring(0,dir.length()-1);//remove trailing "."
+		queryPlan = new QueryPlan("QP",dir + "queryplan.dtd");//make new query plan from default dtd
+		operatorTemplates = queryPlan.getOpTemplates();
+		operatorNames = queryPlan.getOperatorNames();
+		List ops = Arrays.asList(operatorNames);
+		opPicker.hide();
+		opPicker = new OperatorSelectorDialog(ops, this);
+		((mxGraphModel) graph.getModel()).clear();
+		parent = graph.getDefaultParent();
 	}
 
 		
