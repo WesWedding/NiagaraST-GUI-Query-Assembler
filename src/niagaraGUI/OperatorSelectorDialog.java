@@ -47,6 +47,7 @@ public class OperatorSelectorDialog implements ActionListener{
 	    frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		frame.setAlwaysOnTop(true);
 	}
 	@Override
 	public void actionPerformed(ActionEvent evt) {
