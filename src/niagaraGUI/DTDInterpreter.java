@@ -23,11 +23,10 @@ import org.xmlmiddleware.xmlutils.*;
  *   http://www.rpbourret.com/dtdparser/index.htm
  */
 public class DTDInterpreter extends DefaultHandler {
-    private Hashtable<String, OperatorTemplate> templateLookup;
-	//private XMLReader xr;
 	private DTDParser dp;
 	private DTD dtd;
 	private String filename;
+	private Hashtable <String, OperatorTemplate> templateLookup;
 	
 	
 	public DTDInterpreter() {}

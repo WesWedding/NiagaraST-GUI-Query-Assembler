@@ -17,8 +17,8 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 
 public class GraphNode extends Operator implements Serializable {
-	private mxCell portIn;
-	private mxCell portOut;
+	private IOPort portIn;
+	private IOPort portOut;
 	private mxCell mainBox;
 	private mxCell opGroup;
 	transient private mxGraph graph;

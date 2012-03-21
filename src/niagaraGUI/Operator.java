@@ -18,9 +18,7 @@ public class Operator implements java.io.Serializable{
     protected String name;//This is name of operator NOT id
     protected String comments;//Comments to be inserted with this operators XML code
     protected boolean isTop = false;
-    protected org.jdom.Attribute a;
     public Operator(OperatorTemplate opTemplate) {
-        a = new org.jdom.Attribute("ADB", "DHH");
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         reqAttribs = new HashMap<String,String>();
         optAttribs = new HashMap<String,String>();

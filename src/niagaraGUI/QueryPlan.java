@@ -24,7 +24,7 @@ public class QueryPlan implements java.io.Serializable {
     private String externalDTDfilename;//external DTD path which will be written in xml file
     static private Hashtable<String, OperatorTemplate> opTemplates;//Table of operator templates indexed by operator name
     private List<Operator> opList;//List of operator Instances in the current query plan
-    private List<Object> edges;//Stores jGraph Edge objects connecting operators 
+    private List<Object> edges;//Stores jGraph Edge objects connecting operators, needed for serialization
     private Operator top;//reference to the top operator, top is also in opList
     private String queryName;//name of this query
     transient private DTDInterpreter dtdInterp;//a dtd interpreter reference
