@@ -217,7 +217,6 @@ public class MainFrame extends JFrame {
 	            popup.show(graphComponent, e.getX(), e.getY());
         	}
         }
-	
 	}
 	
 	public MainFrame(){
