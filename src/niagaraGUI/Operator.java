@@ -4,6 +4,7 @@ import java.util.*;
 //import niagaraGUI.OperatorTemplate.DefaultValue;
 import org.xmlmiddleware.schemas.dtds.*;
 
+
 /**
  * 
  * @author Weston Wedding
@@ -17,9 +18,9 @@ public class Operator {
     protected String name;//This is name of operator NOT id
     protected String comments;//Comments to be inserted with this operators XML code
     protected boolean isTop = false;
-    
+    protected org.jdom.Attribute a;
     public Operator(OperatorTemplate opTemplate) {
-        
+        a = new org.jdom.Attribute("ADB", "DHH");
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         reqAttribs = new HashMap<String,String>();
         optAttribs = new HashMap<String,String>();
@@ -138,7 +139,8 @@ public class Operator {
 			this.setAttribute("input", allIns);//set intput attribute to this string of inputs
 			return true;//success! return true
 		}
-		
-    	
+    }
+    public void setTop(boolean set){
+    	this.isTop = set;
     }
 }

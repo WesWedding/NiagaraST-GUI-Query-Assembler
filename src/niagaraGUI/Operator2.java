@@ -3,7 +3,7 @@ package niagaraGUI;
 import java.util.*;
 //import niagaraGUI.OperatorTemplate.DefaultValue;
 import org.xmlmiddleware.schemas.dtds.*;
-import org.jdom.*;
+//import org.jdom.*;
 //import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -14,7 +14,7 @@ import org.jdom.Element;
  *
  */
 
-public class Operator {
+public class Operator2 {
     protected HashMap<String, String> reqAttribs; //String name, String value
     protected HashMap<String,String> optAttribs;  //String name, String value
     protected String elements; //houses xml code for any internal elements like predicates for Select
@@ -22,7 +22,7 @@ public class Operator {
     protected String comments;//Comments to be inserted with this operators XML code
     protected boolean isTop = false;
     
-    public Operator(OperatorTemplate opTemplate) {
+    public Operator2(OperatorTemplate opTemplate) {
         
         HashMap<String, Attribute> templateAttributes = opTemplate.getAttributes();
         reqAttribs = new HashMap<String,String>();

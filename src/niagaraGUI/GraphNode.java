@@ -11,6 +11,7 @@ import javax.swing.*;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
@@ -102,6 +103,12 @@ public class GraphNode extends Operator implements Serializable {
 	
 	public void update(){
 		graph.getModel().beginUpdate();
+		if (this.isTop){
+			graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "green", new Object[]{this.mainBox,this.portIn,this.portOut});
+		}
+		else{
+			graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#6482B9", new Object[]{this.mainBox,this.portIn,this.portOut});
+		}
 		graph.setAutoSizeCells(true);
 		graph.refresh();
 		graph.getModel().endUpdate();
@@ -151,14 +158,9 @@ public class GraphNode extends Operator implements Serializable {
 		}
 		return result;
 	}
-	protected boolean updateSinks(String oldID){
-		//this method updates all nodes which receive data from this node with this nodes new name
-		List<mxCell> outEdges = getOutgoingEdges();
-		for (mxCell edge : outEdges){
-			GraphNode sink = (GraphNode) edge.getTarget().getParent();
-			sink.removeInput(sink);
-		}
-		return true;
-	}
+	public void setTop(boolean set){
+    	this.isTop = set;
+    	this.update();
+    }
 
 }

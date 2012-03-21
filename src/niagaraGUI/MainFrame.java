@@ -166,6 +166,18 @@ public class MainFrame extends JFrame implements ActionListener {
 					queryPlan.generateXML(fileName);
 				}
 			}
+			else if (evt.getSource() == propMenuItm){
+				PropertyDialog pd = new PropertyDialog((GraphNode)clickedCell.getValue());
+				System.out.println("cell=" + graph.getLabel(clickedCell));
+			}
+			else if (evt.getSource() == topMenuItm){
+				GraphNode newTop = (GraphNode)clickedCell.getValue();
+				GraphNode oldTop = (GraphNode)queryPlan.getTop();
+				if (newTop == null) return;
+				queryPlan.setTop(newTop);
+				newTop.update();
+				if (!(oldTop==null)) oldTop.update();
+			}
 			
 		}
 		
@@ -186,13 +198,21 @@ public class MainFrame extends JFrame implements ActionListener {
 		super();
 		Dimension minSize = new Dimension(400,200);
 		this.setMinimumSize(minSize);
+		initMembers();
 		initComponents();
-	}
-	
-	private void initComponents(){
 		buildMenus();
+	}
+	private void initMembers(){//initialize class members
+		queryPlan = new QueryPlan("QP","queryplan.dtd");
+		operatorTemplates = queryPlan.getOpTemplates();
+		operatorNames = queryPlan.getOperatorNames();
+		List ops = Arrays.asList(operatorNames);
+		opPicker = new OperatorSelectorDialog(ops, this);
 		graph = new mxGraph();
 		parent = graph.getDefaultParent();
+	}
+	private void initComponents(){//initialize UI components
+		
 		graph.getModel().beginUpdate();
 		graph.setCellsEditable(false);
 		graph.setAutoSizeCells(true);
@@ -206,9 +226,19 @@ public class MainFrame extends JFrame implements ActionListener {
 		stil.put(mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
 		stil.put(mxConstants.STYLE_STROKECOLOR, "#6482B9");
 		stil.put(mxConstants.STYLE_FONTCOLOR, "#446299");
+		
+		Map<String, Object> stil2 = new HashMap<String, Object>();
+		
+		stil2.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stil2.put(mxConstants.STYLE_PERIMETER, "100");
+		stil2.put(mxConstants.STYLE_FILLCOLOR, "#000000");
+		stil2.put(mxConstants.STYLE_FOLDABLE, false);
+		stil2.put(mxConstants.STYLE_ROUNDED, true);
+		stil2.put(mxConstants.STYLE_AUTOSIZE, true);
 
 		mxStylesheet foo = new mxStylesheet();
 		foo.setDefaultEdgeStyle(stil);
+		foo.setDefaultVertexStyle(stil2);
 		graph.setStylesheet(foo);
 		
 		graph.setCellStyle( "edgeStyle=mxEdgeStyle.orthoConnector" );
@@ -218,33 +248,30 @@ public class MainFrame extends JFrame implements ActionListener {
 		graphComponent.getGraphControl().addMouseListener(new MouseListener());
 		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener(this));
 		graphComponent.addKeyListener(new KeyEventListener(this));
-		popup = new JPopupMenu();
-		propMenuItm = new JMenuItem("Properties");
-		propMenuItm.addActionListener(this);
-		topMenuItm = new JMenuItem("Set as top");
-		topMenuItm.addActionListener(this);
-		popup.add(propMenuItm);
 		
-		queryPlan = new QueryPlan("QP","queryplan.dtd");
-		operatorTemplates = queryPlan.getOpTemplates();
-		operatorNames = queryPlan.getOperatorNames();
-		List ops = Arrays.asList(operatorNames);
-		opPicker = new OperatorSelectorDialog(ops, this);
+		
 		
 		graph.getModel().endUpdate();
 	}
-	/**
-	 * @param args
-	 */
+
 	private void buildMenus(){
+		MenuListener ml = new MenuListener(this);
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		exportXMLMenuItm = new JMenuItem("Export XML");
 		fileMenu.add(exportXMLMenuItm);
-		exportXMLMenuItm.addActionListener(new MenuListener(this));
+		exportXMLMenuItm.addActionListener(ml);
 		
 		this.setJMenuBar(menuBar);
+		
+		popup = new JPopupMenu();
+		propMenuItm = new JMenuItem("Properties");
+		propMenuItm.addActionListener(ml);
+		topMenuItm = new JMenuItem("Set as top");
+		topMenuItm.addActionListener(ml);
+		popup.add(topMenuItm);
+		popup.add(propMenuItm);
 	}
 
 	public static void main(String[] args) {
@@ -260,10 +287,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if (e.getSource() == propMenuItm){
-			PropertyDialog pd = new PropertyDialog((GraphNode)clickedCell.getValue());
-			System.out.println("cell=" + graph.getLabel(clickedCell));
-		}
+		
 	}
 	
 	public boolean addOperator(String opName){
