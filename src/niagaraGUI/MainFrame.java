@@ -40,7 +40,7 @@ import com.mxgraph.view.mxEdgeStyle;
 import javax.swing.*;
 
 
-public class MainFrame extends JFrame implements ActionListener {
+public class MainFrame extends JFrame {
 	private JDesktopPane jd;
 	private mxGraph graph;
 	private Object parent;
@@ -170,8 +170,12 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 			else if (evt.getSource() == propMenuItm){
 				if (clickedCell == null) return;
-				PropertyDialog pd = new PropertyDialog((GraphNode)clickedCell.getValue());
-				System.out.println("cell=" + graph.getLabel(clickedCell));
+				else{
+					if (clickedCell instanceof GraphNode.IOPort) clickedCell = (mxCell)clickedCell.getParent();
+					GraphNode gn = (GraphNode)clickedCell.getValue();
+					gn.showDialog();
+				}
+				
 			}
 			else if (evt.getSource() == topMenuItm){
 				if (clickedCell == null) return;
@@ -295,15 +299,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		MainFrame frame = new MainFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setVisible(true);
-	}
-
-	
-	//Listeners
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public boolean addOperator(String opName){
