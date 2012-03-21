@@ -4,11 +4,15 @@ import java.util.*;
 import org.jdom.*;
 import java.io.FileWriter;
 import java.io.IOException;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.transform.stream.StreamResult;
+
+import org.jdom.*;
+import org.jdom.input.*;
+import org.jdom.output.*;
 
 public class QueryPlan {
     private String internalDTDfilename;//local DTD to populate the opTemplates
@@ -41,7 +45,9 @@ public class QueryPlan {
             String name;
             String elements;
             String comments;
-            DocType type = new DocType("plan", "/stash/datalab/datastreams-student/bin/queryplan.dtd");
+            //String DTDString = "/stash/datalab/datastreams-student/bin/queryplan.dtd";
+            String DTDString = "D:\\wes my docs\\NiagraGUI\\src\\niagaraGUI\\queryplan.dtd";
+            DocType type = new DocType("plan", DTDString);
             Iterator iterator;
             iterator = opList.iterator();
             Operator op;
@@ -85,14 +91,36 @@ public class QueryPlan {
                     if(str2 != null)
                     ele.setAttribute(new Attribute(str1,str2));
                 }
-                if(elements != null)
-                ele.addContent("\n" + elements + "\n");
+                
+                /* Welcome to kludge town!  Since sub-elements are just strings,
+                 * our friendly jdom is going to escape characters like < and >.
+                 * The library doesn't let us override this!
+                 * 
+                 * So the workaround for now is to load the string into jdom
+                 * and make a psudo-document out of it, and then force those
+                 * elements into our real document.
+                */ 
+                if(elements != null) {
+                    //ele.addContent("\n" + elements + "\n");
+                    List<Content> contentList = strToJdomContent(elements);
+                    // Had to use an old for loop and not iterators because modifying lists
+                    // while iterating causes exceptions.  Since we're already so kludge-tastic
+                    // at this point I don't mind doing this.
+                    for (int j = 0; j < contentList.size();j++) {
+                        Content c = contentList.get(j);
+                        c.detach();
+                        ele.addContent(c);
+                    }
+                }
+
+                //return jdomDocument.getRootElement();
                 doc1.getRootElement().addContent(ele);
             }
         
             XMLOutputter xmlOutput = new XMLOutputter();
             xmlOutput.setFormat(Format.getPrettyFormat());
             xmlOutput.output(doc1, new FileWriter(filename));
+            validateOutput(filename);
             System.out.println("File Saved!");
         
         }catch (IOException io) {
@@ -180,5 +208,47 @@ public class QueryPlan {
     }
     public Operator getTop(){
         return top;
+    }
+    
+    // Code credit: Elliotte Rusty Harold
+    // Code source: http://www.cafeconleche.org/books/xmljava/chapters/ch14s07.html
+    // Seemed like some validation would be nice.
+    private boolean validateOutput(String filename) {        
+        SAXBuilder builder = new SAXBuilder();
+        
+        // command line should offer URIs or file names
+        try {
+          builder.build(filename);
+          // If there are no well-formedness errors, 
+          // then no exception is thrown
+          System.out.println(filename + " is well-formed.");
+        }
+        // indicates a well-formedness error
+        catch (JDOMException e) { 
+          System.out.println(filename + " is not well-formed.");
+          System.out.println(e.getMessage());
+        }  
+        catch (IOException e) { 
+          System.out.println("Could not check " + filename);
+          System.out.println(" because " + e.getMessage());
+        }        
+        return true;
+    }
+    
+    private List<Content> strToJdomContent(String strContent) {
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        SAXBuilder saxBuilder = new SAXBuilder();
+        Reader stringReader = new StringReader(strContent);
+        try {
+            Document jdomDocument = saxBuilder.build(stringReader);
+            System.out.println(jdomDocument.getContent());
+            return jdomDocument.getContent();
+        }
+            catch (Exception e) { 
+                System.out.println("Could not check " + filename);
+                System.out.println(" because " + e.getMessage());
+       }
+       return new ArrayList<Content>();
     }
 }
