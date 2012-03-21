@@ -217,7 +217,7 @@ public class MainFrame extends JFrame {
         public void mousePressed(MouseEvent e) {
         	if (e.getButton() == e.BUTTON3){
 	            clickedCell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
-	            System.out.println("Mouse click in graph component");
+	            //System.out.println("Mouse click in graph component");
 	            popup.show(graphComponent, e.getX(), e.getY());
         	}
         }
@@ -285,8 +285,6 @@ public class MainFrame extends JFrame {
 		graphComponent.getGraphControl().addMouseListener(new MouseListener());
 		graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT, new EdgeListener(this));
 		graphComponent.addKeyListener(new KeyEventListener(this));
-		
-		
 		
 		graph.getModel().endUpdate();
 	}
