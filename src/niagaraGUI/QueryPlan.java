@@ -79,7 +79,7 @@ public class QueryPlan {
             }
         
             XMLOutputter xmlOutput = new XMLOutputter();
-            xmlOutput.setFormat(Format.getRawFormat());
+            xmlOutput.setFormat(Format.getPrettyFormat());
             xmlOutput.output(doc1, new FileWriter(filename));
             System.out.println("File Saved!");
         
