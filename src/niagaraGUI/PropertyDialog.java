@@ -24,7 +24,8 @@ public class PropertyDialog implements ActionListener{
 	  txtBoxes = new HashMap<String, JTextField>();
 	  partnerNode = n;
 	  frame = new JFrame("Properties for " + partnerNode.getName());
-	  frame.setLayout(new GridLayout(0,1));
+	  Container contentPane = frame.getContentPane();
+	  contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 	  attribPanel = new JPanel(new GridLayout(0,2));
 	  attribPanel.add(new JLabel("Required Attributes"));
 	  attribPanel.add(new JLabel(""));
@@ -59,22 +60,25 @@ public class PropertyDialog implements ActionListener{
 		  //attribPanel.add(new AttribPanel(k, (String)reqAttribs.get(k)));
 	  }
 	  
-	  frame.add(attribPanel);
+	  contentPane.add(attribPanel);
 	  
-	  contentTextPanel = new JPanel();
-	  contentTextPanel.setLayout(new BoxLayout(contentTextPanel, BoxLayout.PAGE_AXIS));
-	  contentText = new JTextArea(partnerNode.elements);
-	  contentTextPanel.add(new JLabel("Content Text"));
-	  contentTextPanel.add(contentText);
+	  contentTextPanel = new JPanel(new BorderLayout());
+	  contentText = new JTextArea(partnerNode.elements,20,20);
+	  JScrollPane scrollPane1 = new JScrollPane(contentText);
+	  contentText.setLineWrap(true);
+	  contentTextPanel.add(new JLabel("Content Text"),BorderLayout.PAGE_START);
+	  contentTextPanel.add(scrollPane1, BorderLayout.CENTER);
 	  
+	  contentPane.add(contentTextPanel);
 	  
-	  frame.add(contentTextPanel);
+	  commentTextPanel = new JPanel(new BorderLayout());
+	  commentTextPanel.add(new JLabel("Comment Text:"),BorderLayout.PAGE_START);
+	  commentText = new JTextArea(partnerNode.comments, 20,20);
+	  JScrollPane scrollPane = new JScrollPane(commentText); 
+	  commentText.setLineWrap(true);
+	  commentTextPanel.add(scrollPane, BorderLayout.CENTER);
 	  
-	  commentTextPanel = new JPanel();
-	  commentTextPanel.setLayout(new BoxLayout(commentTextPanel,BoxLayout.PAGE_AXIS));
-	  commentTextPanel.add(new JLabel("Comment Text:"));
-	  commentText = new JTextArea(partnerNode.comments);
-	  commentTextPanel.add(commentText);
+	  contentPane.add(commentTextPanel);
 	  
 	  buttonPanel = new JPanel();
 	  buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
@@ -85,11 +89,7 @@ public class PropertyDialog implements ActionListener{
 	  buttonPanel.add(btnUpdate);
 	  buttonPanel.add(btnCancel);
 	  
-	  frame.add(commentTextPanel);
-	  
-	  
-	  
-	  frame.add(buttonPanel);
+	  contentPane.add(buttonPanel);
 	  
 	  frame.pack();
 	  //Dimension minSize = new Dimension(400,200);
