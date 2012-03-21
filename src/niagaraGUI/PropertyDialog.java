@@ -52,7 +52,7 @@ public class PropertyDialog implements ActionListener{
 	}
 	private void initDraw(){
 		txtBoxes = new HashMap<String, JTextField>();
-		frame = new JFrame("Properties for " + partnerNode.getName());
+		frame = new JFrame("Properties for " + partnerNode.getName() + " : " + partnerNode.getAttribute("id"));
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 		attribPanel = new JPanel(new GridLayout(0,2));
@@ -137,6 +137,7 @@ public class PropertyDialog implements ActionListener{
 	}
 	public void updateContents(){
 		//updates all fields to reflect state of partnerNode
+		frame.setTitle("Properties for " + partnerNode.getName() + " : " + partnerNode.getAttribute("id"));
 		HashMap<String,String> reqAttribs = partnerNode.getRequiredAttributes();
 		HashMap<String,String> optAttribs = partnerNode.getOptionalAttributes();
 		Set<String> keys = reqAttribs.keySet();

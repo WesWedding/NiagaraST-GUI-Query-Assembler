@@ -366,8 +366,10 @@ public class MainFrame extends JFrame {
 		return false;
 	}
 	public boolean chooseExternalDTD(){
-		
-		return false;
+		String str = JOptionPane.showInputDialog(this, "External DTD path : ", 
+				queryPlan.getExternalDTDFileName());
+		queryPlan.setExternalDTDFileName(str);
+		return true;
 	}
 	public boolean chooseInternalDTD(){
 		JFileChooser fc = new JFileChooser();
@@ -393,7 +395,7 @@ public class MainFrame extends JFrame {
 		List ops = Arrays.asList(operatorNames);
 		opPicker.hide();
 		opPicker = new OperatorSelectorDialog(ops, this);
-		return false;
+		return true;
 	}
 
 		
