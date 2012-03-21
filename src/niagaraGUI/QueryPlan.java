@@ -54,7 +54,7 @@ public class QueryPlan implements java.io.Serializable {
             String elements;
             String comments;
             //String DTDString = "/stash/datalab/datastreams-student/bin/queryplan.dtd";
-            String DTDString = "D:\\wes my docs\\NiagraGUI\\src\\niagaraGUI\\queryplan.dtd";
+            String DTDString = this.externalDTDfilename;
             DocType type = new DocType("plan", DTDString);
             Iterator iterator;
             iterator = opList.iterator();
@@ -220,6 +220,7 @@ public class QueryPlan implements java.io.Serializable {
            this.opTemplates = dtdInterp.getTemplates();
            this.opList = qp.opList;
            this.edges = qp.edges;
+           this.top = qp.top;
        }catch(IOException i)
        {
            i.printStackTrace();

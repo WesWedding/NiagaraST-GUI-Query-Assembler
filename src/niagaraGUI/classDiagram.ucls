@@ -12,7 +12,7 @@
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="niagaraGUI.GraphNode.IOPort" 
     project="NiagraST-GUI-Query-Assembler2" file="/NiagraST-GUI-Query-Assembler2/src/niagaraGUI/GraphNode.java" 
     binary="false">    
-    <position height="-1" width="-1" x="-1" y="712"/>    
+    <position height="-1" width="-1" x="-5" y="691"/>    
     <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -39,7 +39,7 @@
   <class id="5" corner="BOTTOM_RIGHT" language="java" name="niagaraGUI.MainFrame.MouseListener" 
     project="NiagraST-GUI-Query-Assembler2" file="/NiagraST-GUI-Query-Assembler2/src/niagaraGUI/MainFrame.java" 
     binary="false">    
-    <position height="-1" width="-1" x="1098" y="130"/>    
+    <position height="-1" width="-1" x="1097" y="121"/>    
     <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
