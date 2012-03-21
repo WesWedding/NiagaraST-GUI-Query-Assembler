@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
 
 public class MainFrame extends JFrame {
@@ -48,7 +50,8 @@ public class MainFrame extends JFrame {
 	private JMenuItem propMenuItm;//menu to bring up operator properties
 	private JMenuItem topMenuItm;//menu to set operator as top
 	private JMenuItem exportXMLMenuItm;
-	private JMenuItem setDTDMenuItm;
+	private JMenuItem setInternalDTDMenuItm;
+	private JMenuItem setExternalDTDMenuItm;
 	private QueryPlan queryPlan;
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
@@ -186,8 +189,11 @@ public class MainFrame extends JFrame {
 				newTop.update();
 				if (!(oldTop==null)) oldTop.update();
 			}
-			else if (evt.getSource() == setDTDMenuItm){
-				
+			else if (evt.getSource() == setInternalDTDMenuItm){
+				chooseInternalDTD();
+			}
+			else if (evt.getSource() == setExternalDTDMenuItm){
+				chooseExternalDTD();
 			}
 			
 		}
@@ -216,7 +222,10 @@ public class MainFrame extends JFrame {
 		buildMenus();
 	}
 	private void initMembers(){//initialize class members
-		queryPlan = new QueryPlan("QP","queryplan.dtd");
+		File directory = new File (".");//get working director
+		String dir = directory.getAbsolutePath();//get directory
+		dir = dir.substring(0,dir.length()-1);//remove trailing "."
+		queryPlan = new QueryPlan("QP",dir + "queryplan.dtd");//make new query plan from default dtd
 		operatorTemplates = queryPlan.getOpTemplates();
 		operatorNames = queryPlan.getOperatorNames();
 		List ops = Arrays.asList(operatorNames);
@@ -279,9 +288,13 @@ public class MainFrame extends JFrame {
 		fileMenu.add(exportXMLMenuItm);
 		exportXMLMenuItm.addActionListener(ml);
 		
-		setDTDMenuItm = new JMenuItem("Select DTD");
-		fileMenu.add(setDTDMenuItm);
-		setDTDMenuItm.addActionListener(ml);
+		setInternalDTDMenuItm = new JMenuItem("Select Internal DTD");
+		fileMenu.add(setInternalDTDMenuItm);
+		setInternalDTDMenuItm.addActionListener(ml);
+		
+		setExternalDTDMenuItm = new JMenuItem("Select External DTD");
+		fileMenu.add(setExternalDTDMenuItm);
+		setExternalDTDMenuItm.addActionListener(ml);
 		
 		this.setJMenuBar(menuBar);
 		
@@ -350,6 +363,36 @@ public class MainFrame extends JFrame {
 		queryPlan.removeOperatorInstance(op);
 		mxCell[] toRemove = {operatorNode};
 		graph.removeCells(toRemove);
+		return false;
+	}
+	public boolean chooseExternalDTD(){
+		
+		return false;
+	}
+	public boolean chooseInternalDTD(){
+		JFileChooser fc = new JFileChooser();
+		File newFile = new File(queryPlan.getInternalDTDFileName());
+		fc.setSelectedFile(newFile);
+		FileFilter chooser = new FileFilter() {
+	        public boolean accept(File f) {
+	          return f.getName().toLowerCase().endsWith(".dtd")
+	              || f.isDirectory();
+	        }
+
+	        public String getDescription() {
+	          return "DTD Files";
+	        }
+	      };
+	    fc.addChoosableFileFilter(chooser);
+		int returnVal = fc.showOpenDialog(this);
+		if (returnVal == fc.APPROVE_OPTION){
+			queryPlan.setInternalDTDFileName(fc.getSelectedFile().getAbsolutePath());
+		}
+		operatorTemplates = queryPlan.getOpTemplates();
+		operatorNames = queryPlan.getOperatorNames();
+		List ops = Arrays.asList(operatorNames);
+		opPicker.hide();
+		opPicker = new OperatorSelectorDialog(ops, this);
 		return false;
 	}
 

@@ -11,16 +11,19 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 public class QueryPlan {
-    private String filename;
+    private String internalDTDfilename;//local DTD to populate the opTemplates
+    private String externalDTDfilename;//external DTD path which will be written in xml file
     static private Hashtable<String, OperatorTemplate> opTemplates;//Table of operator templates indexed by operator name
     private List<Operator> opList;//List of operator Instances in the current query plan
-    private Operator top;//reference to the top operator
-    private String queryName;//name of the query
-    private DTDInterpreter dtdInterp;
+    private Operator top;//reference to the top operator, top is also in opList
+    private String queryName;//name of this query
+    private DTDInterpreter dtdInterp;//a dtd interpreter reference
             
-    public QueryPlan(String name, String filename) {
+    public QueryPlan(String name, String internalDTDfilename) {
         opTemplates = new Hashtable<String, OperatorTemplate>();
-        dtdInterp = new DTDInterpreter(filename);
+        this.internalDTDfilename = internalDTDfilename;
+        this.externalDTDfilename = "/stash/datalab/datastreams-student/bin/queryplan.dtd";
+        dtdInterp = new DTDInterpreter(this.internalDTDfilename);
         opTemplates = dtdInterp.getTemplates();
         opList = new ArrayList<Operator>();
     }
@@ -114,6 +117,15 @@ public class QueryPlan {
     public String getName() {
         //returns the name of this query plan
         return queryName;
+    }
+    public String getInternalDTDFileName(){
+    	return this.internalDTDfilename;
+    }
+    public void setInternalDTDFileName(String newInternalDTDFileName){
+    	opTemplates = new Hashtable<String, OperatorTemplate>();
+        this.internalDTDfilename = newInternalDTDFileName;
+        dtdInterp = new DTDInterpreter(this.internalDTDfilename);
+        opTemplates = dtdInterp.getTemplates();
     }
     public boolean addOperatorInstance(Operator newOp){
         //Adds a new instansiated operator to this queryplan
