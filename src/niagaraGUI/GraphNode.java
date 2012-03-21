@@ -23,6 +23,7 @@ public class GraphNode extends Operator implements Serializable {
 	private mxCell opGroup;
 	private mxGraph graph;
 	private Object parent;
+	private PropertyDialog propertyDialog;
 	
 	
 	public class IOPort extends mxCell{
@@ -44,7 +45,6 @@ public class GraphNode extends Operator implements Serializable {
 		graph = grph;
 		parent = prnt;
 	}
-
 	
 	public String toString(){
 		String s = new String();
@@ -112,6 +112,9 @@ public class GraphNode extends Operator implements Serializable {
 		graph.setAutoSizeCells(true);
 		graph.refresh();
 		graph.getModel().endUpdate();
+		if (this.propertyDialog!=null){
+			this.propertyDialog.updateContents();
+		}
 	}
 	
 	public boolean connect(GraphNode newInput){
@@ -163,5 +166,13 @@ public class GraphNode extends Operator implements Serializable {
     	this.isTop = set;
     	this.update();
     }
-
+	public void showDialog(){
+		if (this.propertyDialog == null){
+			this.propertyDialog = new PropertyDialog(this);
+		}
+		else{
+			this.propertyDialog.show();
+		}
+	}
+	
 }
