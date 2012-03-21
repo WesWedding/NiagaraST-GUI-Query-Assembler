@@ -47,6 +47,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JMenuItem propMenuItm;//menu to bring up operator properties
 	private JMenuItem topMenuItm;//menu to set operator as top
 	private JMenuItem exportXMLMenuItm;
+	private JMenuItem setDTDMenuItm;
 	private QueryPlan queryPlan;
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
@@ -167,16 +168,21 @@ public class MainFrame extends JFrame implements ActionListener {
 				}
 			}
 			else if (evt.getSource() == propMenuItm){
+				if (clickedCell == null) return;
 				PropertyDialog pd = new PropertyDialog((GraphNode)clickedCell.getValue());
 				System.out.println("cell=" + graph.getLabel(clickedCell));
 			}
 			else if (evt.getSource() == topMenuItm){
+				if (clickedCell == null) return;
 				GraphNode newTop = (GraphNode)clickedCell.getValue();
 				GraphNode oldTop = (GraphNode)queryPlan.getTop();
 				if (newTop == null) return;
 				queryPlan.setTop(newTop);
 				newTop.update();
 				if (!(oldTop==null)) oldTop.update();
+			}
+			else if (evt.getSource() == setDTDMenuItm){
+				
 			}
 			
 		}
@@ -230,15 +236,18 @@ public class MainFrame extends JFrame implements ActionListener {
 		Map<String, Object> stil2 = new HashMap<String, Object>();
 		
 		stil2.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stil2.put(mxConstants.STYLE_PERIMETER, "100");
-		stil2.put(mxConstants.STYLE_FILLCOLOR, "#000000");
+		stil2.put(mxConstants.STYLE_SEPARATORCOLOR, "#000000");
+		stil2.put(mxConstants.STYLE_LABEL_BORDERCOLOR, "#000000");
+		stil2.put(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, "#bfbfef");
+		stil2.put(mxConstants.STYLE_RESIZABLE, false);
+		stil2.put(mxConstants.STYLE_FILLCOLOR, "#00aa10");
 		stil2.put(mxConstants.STYLE_FOLDABLE, false);
 		stil2.put(mxConstants.STYLE_ROUNDED, true);
 		stil2.put(mxConstants.STYLE_AUTOSIZE, true);
 
 		mxStylesheet foo = new mxStylesheet();
 		foo.setDefaultEdgeStyle(stil);
-		foo.setDefaultVertexStyle(stil2);
+		//foo.setDefaultVertexStyle(stil2);
 		graph.setStylesheet(foo);
 		
 		graph.setCellStyle( "edgeStyle=mxEdgeStyle.orthoConnector" );
@@ -262,6 +271,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		exportXMLMenuItm = new JMenuItem("Export XML");
 		fileMenu.add(exportXMLMenuItm);
 		exportXMLMenuItm.addActionListener(ml);
+		
+		setDTDMenuItm = new JMenuItem("Select DTD");
+		fileMenu.add(setDTDMenuItm);
+		setDTDMenuItm.addActionListener(ml);
 		
 		this.setJMenuBar(menuBar);
 		

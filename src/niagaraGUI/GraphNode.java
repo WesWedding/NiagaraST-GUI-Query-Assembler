@@ -104,10 +104,10 @@ public class GraphNode extends Operator implements Serializable {
 	public void update(){
 		graph.getModel().beginUpdate();
 		if (this.isTop){
-			graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "green", new Object[]{this.mainBox,this.portIn,this.portOut});
+			graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#efefbf", new Object[]{this.mainBox,this.portIn,this.portOut});
 		}
 		else{
-			graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#6482B9", new Object[]{this.mainBox,this.portIn,this.portOut});
+			graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#bfbfef", new Object[]{this.mainBox,this.portIn,this.portOut});
 		}
 		graph.setAutoSizeCells(true);
 		graph.refresh();
@@ -115,6 +115,7 @@ public class GraphNode extends Operator implements Serializable {
 	}
 	
 	public boolean connect(GraphNode newInput){
+		//add this operator as input to another operator
 		boolean result = this.addInput(newInput);
 		this.update();
 		return result;
