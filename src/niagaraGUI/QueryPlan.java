@@ -71,8 +71,10 @@ public class QueryPlan {
                 }
                 if(elements != null)
                 ele.addContent("\n" + elements + "\n");
-                if(comments != null)
-                ele.addContent("//" + comments + "\n");
+                if(comments != null){
+                   Comment com = new Comment(comments);
+                   ele.setContent(com);
+                }
                 doc1.getRootElement().addContent(ele);
             }
         
