@@ -66,7 +66,7 @@ public class QueryPlan implements java.io.Serializable {
             Element plan = new Element("plan");
             //plan.setAttribute(new Attribute("top", "cons"));
             if (top != null) {
-                plan.setAttribute("top", top.getName());
+                plan.setAttribute("top", top.getAttribute("id"));
             } else {
                 plan.setAttribute("top", "");
             }
