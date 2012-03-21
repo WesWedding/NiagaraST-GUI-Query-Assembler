@@ -38,18 +38,26 @@ public class QueryPlan {
             String name;
             String elements;
             String comments;
-            Element plan = new Element("plan");
-            plan.setAttribute(new Attribute("top", "cons"));
-            Document doc1 = new Document(plan);
             DocType type = new DocType("plan", "/stash/datalab/datastreams-student/bin/queryplan.dtd");
-            doc1.setDocType(type);
-            doc1.setRootElement(plan);
             Iterator iterator;
             iterator = opList.iterator();
             Operator op;
             
             HashMap<String, String> att;
             
+            //Set the root element first
+            Element plan = new Element("plan");
+            //plan.setAttribute(new Attribute("top", "cons"));
+            if (top != null) {
+                plan.setAttribute("top", top.getName());
+            } else {
+                plan.setAttribute("top", "");
+            }
+            Document doc1 = new Document(plan);
+            doc1.setDocType(type);
+            doc1.setRootElement(plan);
+            
+            //Now iterate through our operators
             while (iterator.hasNext()){
                 op = (Operator)iterator.next();
                 name = op.getName();
@@ -61,6 +69,7 @@ public class QueryPlan {
                 Iterator i = set.iterator(); 
                 String str1;
                 String str2;
+                //Comments go just before the operator!
                 if(comments != null){
                     Comment com = new Comment(comments);
                     //ele.setContent(com);
