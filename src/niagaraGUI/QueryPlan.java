@@ -92,10 +92,13 @@ public class QueryPlan {
     }
     
     public void setTop(Operator newTop){
-    	if (top != null){
-    		top.isTop = false;
-    		top = newTop;
-    		top.isTop = true;
-    	}
+    	if (top != null)
+    		top.setTop(false);
+    	top = newTop;
+    	top.setTop(true);
+    	
+    }
+    public Operator getTop(){
+    	return top;
     }
 }
