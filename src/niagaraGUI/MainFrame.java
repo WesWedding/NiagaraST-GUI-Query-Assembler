@@ -202,7 +202,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 	
 	public MainFrame(){
-		super();
+		super("NiagaraST Query Builder");
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension minSize = new Dimension((int)(screenDim.width * 0.8) ,(int)(screenDim.height * 0.8));
 		this.setMinimumSize(minSize);

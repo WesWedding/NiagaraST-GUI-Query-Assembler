@@ -1,5 +1,6 @@
 package niagaraGUI;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -32,16 +33,16 @@ public class OperatorSelectorDialog implements ActionListener{
 	private void initComponents(){
 		frame = new JFrame("Operators");
 		content = frame.getContentPane();
-	    content.setLayout(new GridLayout(0,1));
+	    //content.setLayout(new GridLayout(0,1));
 	    
 	    opList = new JList(opNames.toArray());
 		JScrollPane listScroller = new JScrollPane(opList);
 		listScroller.setPreferredSize(new Dimension(250, 80));
-		content.add(listScroller);
+		content.add(listScroller, BorderLayout.CENTER);
 		
 	    addBtn = new JButton("Add Operator");
 	    addBtn.addActionListener(this);
-	    content.add(addBtn);
+	    content.add(addBtn, BorderLayout.PAGE_END);
 	    
 
 	    frame.pack();
