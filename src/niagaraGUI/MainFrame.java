@@ -12,6 +12,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -202,8 +203,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	
 	public MainFrame(){
 		super();
-		Dimension minSize = new Dimension(400,200);
+		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension minSize = new Dimension((int)(screenDim.width * 0.8) ,(int)(screenDim.height * 0.8));
 		this.setMinimumSize(minSize);
+		this.setLocation((int)(screenDim.width * 0.1) ,(int)(screenDim.height * 0.1));
 		initMembers();
 		initComponents();
 		buildMenus();
