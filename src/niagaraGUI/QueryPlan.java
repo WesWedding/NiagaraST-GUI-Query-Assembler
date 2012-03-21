@@ -35,21 +35,31 @@ public class QueryPlan {
     
     public void generateXML(String filename) {
         try{
+            String name;
+            String elements;
+            //String comments;
+            //name = top.getName();
             Element plan = new Element("plan");
             plan.setAttribute(new Attribute("top", "cons"));
             Document doc1 = new Document(plan);
             DocType type = new DocType("plan", "/stash/datalab/datastreams-student/bin/queryplan.dtd");
+            //Comment comment = new Comment("----haha---");
             doc1.setDocType(type);
+            //doc1.setContent(comment);
             doc1.setRootElement(plan);
             Iterator iterator;
             iterator = opList.iterator();
             Operator op;
-            String name;
+            
             HashMap<String, String> att;
             
             while (iterator.hasNext()){
                 op = (Operator)iterator.next();
                 name = op.getName();
+                //comments = op.getComments();
+                //Comment comment = new Comment(op.getComments());
+                //doc1.setContent(comment);
+                elements = op.getElements();
                 Element ele = new Element(name);
                 att = op.getAttributes();
                 Set set = att.entrySet();
@@ -64,6 +74,11 @@ public class QueryPlan {
                     if(str2 != null)
                     ele.setAttribute(new Attribute(str1,str2));
                 }
+                //System.out.println(elements + "--------------");
+                if(elements != null)
+                ele.setText(elements + "\n");
+                //if(comments != null)
+                //ele.setText("//" + comments + "\n");
                 doc1.getRootElement().addContent(ele);
             }
         
@@ -77,14 +92,14 @@ public class QueryPlan {
       }
     }
     public String[] getOperatorNames(){
-    	if (opTemplates != null){
-    		Set<String> opNameSet = opTemplates.keySet();
-    		String[] opNameAry = new String[opNameSet.size()];
-    		opNameAry = opNameSet.toArray(opNameAry);
-    		
-    		return opNameAry;
-    	}
-    	else return null;
+        if (opTemplates != null){
+            Set<String> opNameSet = opTemplates.keySet();
+            String[] opNameAry = new String[opNameSet.size()];
+            opNameAry = opNameSet.toArray(opNameAry);
+            
+            return opNameAry;
+        }
+        else return null;
     }
     
     public void setName(String name) {
@@ -92,29 +107,29 @@ public class QueryPlan {
     }
     
     public String getName() {
-    	//returns the name of this query plan
+        //returns the name of this query plan
         return queryName;
     }
     public boolean addOperatorInstance(Operator newOp){
-    	//Adds a new instansiated operator to this queryplan
-    	if (opList.contains(newOp)){
-    		return false;
-    	}
-    	else{
-    		opList.add(newOp);
-    		return true;
-    	}
-    	
+        //Adds a new instansiated operator to this queryplan
+        if (opList.contains(newOp)){
+            return false;
+        }
+        else{
+            opList.add(newOp);
+            return true;
+        }
+        
     }
     public boolean removeOperatorInstance(Operator toRemove){
-    	//removes an instansiated from Operator from this query plan
-    	if (opList.contains(toRemove)){
-    		opList.remove(toRemove);
-    		return true;
-    	}
-    	else{
-    		return false;
-    	}
+        //removes an instansiated from Operator from this query plan
+        if (opList.contains(toRemove)){
+            opList.remove(toRemove);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     
     // This design pattern is in place to ease future import if
@@ -140,13 +155,13 @@ public class QueryPlan {
     }
     
     public void setTop(Operator newTop){
-    	if (top != null)
-    		top.setTop(false);
-    	top = newTop;
-    	top.setTop(true);
-    	
+        if (top != null)
+            top.setTop(false);
+        top = newTop;
+        top.setTop(true);
+        
     }
     public Operator getTop(){
-    	return top;
+        return top;
     }
 }
