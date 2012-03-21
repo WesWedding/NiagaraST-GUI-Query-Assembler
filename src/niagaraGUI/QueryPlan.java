@@ -315,7 +315,7 @@ public class QueryPlan implements java.io.Serializable {
             return jdomDocument.getContent();
         }
             catch (Exception e) { 
-                System.out.println("Could not check " + this.internalDTDfilename);
+                System.out.println("Could not check the string");
                 System.out.println(" because " + e.getMessage());
        }
        return new ArrayList<Content>();
