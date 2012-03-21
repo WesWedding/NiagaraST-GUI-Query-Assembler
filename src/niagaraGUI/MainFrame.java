@@ -230,7 +230,7 @@ public class MainFrame extends JFrame {
 		operatorNames = queryPlan.getOperatorNames();
 		List ops = Arrays.asList(operatorNames);
 		opPicker = new OperatorSelectorDialog(ops, this);
-		graph = new NiagaraGraph();
+		graph = new mxGraph();
 		parent = graph.getDefaultParent();
 	}
 	private void initComponents(){//initialize UI components
