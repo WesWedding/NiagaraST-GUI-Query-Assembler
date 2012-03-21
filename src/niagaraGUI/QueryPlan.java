@@ -1,6 +1,14 @@
 package niagaraGUI;
 
 import java.util.*;
+import org.jdom.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 public class QueryPlan {
     private String filename;
@@ -26,7 +34,47 @@ public class QueryPlan {
     }
     
     public void generateXML(String filename) {
-
+        try{
+            Element plan = new Element("plan");
+            plan.setAttribute(new Attribute("top", "cons"));
+            Document doc1 = new Document(plan);
+            DocType type = new DocType("plan", "/stash/datalab/datastreams-student/bin/queryplan.dtd");
+            doc1.setDocType(type);
+            doc1.setRootElement(plan);
+            Iterator iterator;
+            iterator = opList.iterator();
+            Operator op;
+            String name;
+            HashMap<String, String> att;
+            
+            while (iterator.hasNext()){
+                op = (Operator)iterator.next();
+                name = op.getName();
+                Element ele = new Element(name);
+                att = op.getAttributes();
+                Set set = att.entrySet();
+                Iterator i = set.iterator(); 
+                String str1;
+                String str2;
+                
+                while(i.hasNext()) { 
+                    Map.Entry me = (Map.Entry)i.next(); 
+                    str1 = (String)me.getKey();
+                    str2 = (String)me.getValue();
+                    if(str2 != null)
+                    ele.setAttribute(new Attribute(str1,str2));
+                }
+                doc1.getRootElement().addContent(ele);
+            }
+        
+            XMLOutputter xmlOutput = new XMLOutputter();
+            xmlOutput.setFormat(Format.getPrettyFormat());
+            xmlOutput.output(doc1, new FileWriter(filename));
+            System.out.println("File Saved!");
+        
+        }catch (IOException io) {
+        System.out.println(io.getMessage());
+      }
     }
     public String[] getOperatorNames(){
     	if (opTemplates != null){
