@@ -61,7 +61,11 @@ public class QueryPlan {
                 Iterator i = set.iterator(); 
                 String str1;
                 String str2;
-                
+                if(comments != null){
+                    Comment com = new Comment(comments);
+                    //ele.setContent(com);
+                    doc1.getRootElement().addContent(com);
+                }
                 while(i.hasNext()) { 
                     Map.Entry me = (Map.Entry)i.next(); 
                     str1 = (String)me.getKey();
@@ -71,10 +75,6 @@ public class QueryPlan {
                 }
                 if(elements != null)
                 ele.addContent("\n" + elements + "\n");
-                if(comments != null){
-                   Comment com = new Comment(comments);
-                   ele.setContent(com);
-                }
                 doc1.getRootElement().addContent(ele);
             }
         
