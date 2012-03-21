@@ -68,4 +68,7 @@ public class OperatorSelectorDialog implements ActionListener{
 	public void hide(){
 		this.frame.setVisible(false);
 	}
+	public void toggleVisible(){
+		this.frame.setVisible(!this.frame.isVisible());
+	}
 }

@@ -54,6 +54,7 @@ public class MainFrame extends JFrame {
 	private JMenuItem exportXMLMenuItm;//menu item to export queryplan as xml file
 	private JMenuItem setInternalDTDMenuItm;//menu item to set external dtd file
 	private JMenuItem setExternalDTDMenuItm;//menu item to set internal dtd file
+	private JMenuItem toggleOperatorSelectorVisMenuItm;//menu item to toggle visibility of Operator picker
 	private QueryPlan queryPlan;//the current query plan being edited
 	private Hashtable<String,OperatorTemplate> operatorTemplates;
 	private String[] operatorNames;
@@ -204,6 +205,9 @@ public class MainFrame extends JFrame {
 			else if(evt.getSource() == loadQPMenuItm){
 				loadQueryPlan();
 			}
+			else if(evt.getSource() == toggleOperatorSelectorVisMenuItm){
+				opPicker.toggleVisible();
+			}
 			
 		}
 		
@@ -291,7 +295,14 @@ public class MainFrame extends JFrame {
 		MenuListener ml = new MenuListener(this);
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
+		JMenu viewMenu = new JMenu("View");
+		
 		menuBar.add(fileMenu);
+		menuBar.add(viewMenu);
+		
+		this.toggleOperatorSelectorVisMenuItm = new JMenuItem("Show/Hide Operator Picker");
+		viewMenu.add(toggleOperatorSelectorVisMenuItm);
+		toggleOperatorSelectorVisMenuItm.addActionListener(ml);
 		
 		saveQPMenuItm = new JMenuItem("Save Query Plan");
 		fileMenu.add(saveQPMenuItm);
