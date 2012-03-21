@@ -76,6 +76,27 @@ public class Operator implements java.io.Serializable{
         allAttribs.putAll(optAttribs);
         return allAttribs;
     }
+    public String generateXMLString(){
+    	String s = "";
+    	s += "<!--" + this.comments + "-->\n";
+    	s += "<" + this.getName() + " ";
+    	Set<String> keys = reqAttribs.keySet();
+    	for (String k : keys){
+    		String value = reqAttribs.get(k);
+    		if (value != null && !value.isEmpty())
+    			s += k +"=\"" + value + "\" ";
+    	}
+    	boolean hasElements = this.elements != null && !this.elements.isEmpty();
+    	
+    	if (hasElements){
+    		s += ">\n";
+    		s += this.elements;
+    		s += "\n</" + this.getName() +">\n";
+    	}
+    	else
+    		s += "/>\n";
+    	return s;
+    }
     
     public HashMap<String,String> getRequiredAttributes() {
         return reqAttribs;
