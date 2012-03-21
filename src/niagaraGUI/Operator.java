@@ -42,6 +42,12 @@ public class Operator {
     public String getName(){
     	return this.name;
     }
+    public String getComments(){
+        return this.comments;
+    }
+    public String getElements(){
+        return this.elements;
+    }
     public String getAttribute(String attrib){
     	if (reqAttribs.containsKey(attrib)){
     		return reqAttribs.get(attrib);
