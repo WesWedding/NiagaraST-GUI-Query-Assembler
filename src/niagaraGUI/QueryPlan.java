@@ -37,15 +37,12 @@ public class QueryPlan {
         try{
             String name;
             String elements;
-            //String comments;
-            //name = top.getName();
+            String comments;
             Element plan = new Element("plan");
             plan.setAttribute(new Attribute("top", "cons"));
             Document doc1 = new Document(plan);
             DocType type = new DocType("plan", "/stash/datalab/datastreams-student/bin/queryplan.dtd");
-            //Comment comment = new Comment("----haha---");
             doc1.setDocType(type);
-            //doc1.setContent(comment);
             doc1.setRootElement(plan);
             Iterator iterator;
             iterator = opList.iterator();
@@ -56,9 +53,7 @@ public class QueryPlan {
             while (iterator.hasNext()){
                 op = (Operator)iterator.next();
                 name = op.getName();
-                //comments = op.getComments();
-                //Comment comment = new Comment(op.getComments());
-                //doc1.setContent(comment);
+                comments = op.getComments();
                 elements = op.getElements();
                 Element ele = new Element(name);
                 att = op.getAttributes();
@@ -74,16 +69,15 @@ public class QueryPlan {
                     if(str2 != null)
                     ele.setAttribute(new Attribute(str1,str2));
                 }
-                //System.out.println(elements + "--------------");
                 if(elements != null)
-                ele.setText(elements + "\n");
-                //if(comments != null)
-                //ele.setText("//" + comments + "\n");
+                ele.addContent("\n" + elements + "\n");
+                if(comments != null)
+                ele.addContent("//" + comments + "\n");
                 doc1.getRootElement().addContent(ele);
             }
         
             XMLOutputter xmlOutput = new XMLOutputter();
-            xmlOutput.setFormat(Format.getPrettyFormat());
+            xmlOutput.setFormat(Format.getRawFormat());
             xmlOutput.output(doc1, new FileWriter(filename));
             System.out.println("File Saved!");
         
